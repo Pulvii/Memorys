@@ -3,6 +3,12 @@ let video = null;
 let stream = null;
 let photoCanvas = null;
 let listening = false;
+let camaraFuncinando = true;
+let fotoSacada = false;
+let mensajeEscrito = false;
+const soundBar = document.getElementById("soundBar");
+soundBar.style.display = "none"; 
+
 
 // Simulando datos de usuarios y memorias
 const usuarios = [
@@ -79,11 +85,16 @@ closeFormButton.addEventListener("click", () => {
 
 // Función para iniciar la cámara
 function startCamera() {
+    fotoSacada = false;
+    mensajeEscrito = false;
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         const constraints = { video: true };
         navigator.mediaDevices.getUserMedia(constraints)
             .then(function (mediaStream) {
                 stream = mediaStream;
+                camaraFuncinando = true;
+                document.getElementById("sacarFoto").style.display = "inline-block";
+                document.getElementById("errorCamara").style.display = "none";
                 video = document.createElement("video");
                 video.style.height = "40%";
                 video.setAttribute("id", "video");
@@ -97,6 +108,9 @@ function startCamera() {
             })
             .catch(function (error) {
                 console.error("Error al acceder a la cámara: " + error);
+                document.getElementById("sacarFoto").style.display = "none";
+                document.getElementById("errorCamara").style.display = "block";
+                camaraFuncinando = false;
             });
     } else {
         console.error("getUserMedia no está disponible en este navegador");
@@ -120,8 +134,10 @@ function stopCamera() {
 // Manejar clic en el botón "Tomar Foto"
 capturePhotoButton.addEventListener("click", () => {
     if (video) {
+        fotoSacada = true;
         photoCanvas.width = video.videoWidth;
         photoCanvas.height = video.videoHeight;
+        document.getElementById("sacarFoto").style.display = "none";
         const context = photoCanvas.getContext('2d');
         context.drawImage(video, 0, 0, photoCanvas.width, photoCanvas.height);
         stopCamera(); // Detener la cámara después de tomar la foto
@@ -135,13 +151,23 @@ capturePhotoButton.addEventListener("click", () => {
 // Manejar envío del formulario
 uploadForm.addEventListener("submit", (e) => {
     e.preventDefault();
-
+    
     // Obtener los valores del formulario
     const usuarioId = usuarioIdInput.value;
     const tipo = "foto";
-    const contenido = capturedImage.src; // Usar la imagen capturada como contenido
-    const nota = transcript0;
-    transcript0 = "";
+    var contenido;
+    var nota;
+    if (fotoSacada) {
+     contenido = capturedImage.src; // Usar la imagen capturada como contenido
+    } else{
+        contenido = document.getElementById('imagenMostrada').src;
+    }
+    if (mensajeEscrito) {
+        nota = transcript0;
+        transcript0 = "";
+    }else{
+        nota = " ";
+    }
     primVez = true;
     var output = document.getElementById('output').innerHTML = " ";
     // Verificar si el usuario existe
@@ -189,42 +215,65 @@ uploadForm.addEventListener("submit", (e) => {
         if (listening) {
             micIcon.classList.add("listening");
             micContainer.style.border = "2px solid lightblue"; // Cambia el color del borde
+            micContainer.style.display = "none"; // Cambia el color del borde
+            soundBar.style.display = "flex";
         } else {
             micIcon.classList.remove("listening");
             micContainer.style.border = "2px solid blue"; // Restaura el color del borde original
+            micContainer.style.display = "inline-block"; // Cambia el color del borde
+            soundBar.style.display = "none";
         }
     }
 
 
- runSpeechRecog = () => {
-    listening = !listening; 
-    updateMicIcon();
-    document.getElementById("output").innerHTML = "Loading text...";
-    var output = document.getElementById('output');
-    var action = document.getElementById('action');
-    let recognization = new webkitSpeechRecognition();
-    recognization.onstart = () => {
-            action.innerHTML = "Listening...";
+    let recognitionTimeout;
 
-    }
-    recognization.onresult = (e) => {
-        listening = !listening; 
+    function runSpeechRecog() {
+        listening = true;
         updateMicIcon();
-       transcript = e.results[0][0].transcript;
-
-        if(primVez){
-            transcript0 = transcript;
-        }
-       if(primVez){
-        output.innerHTML = transcript + " "+ "<img onclick='borrarMsj()' src='borrar.png' style='max-width: 5%; max-height: 5%;'>";
-       output.classList.remove("hide")
-       primVez=false;
-       } else{
-        escribirMensaje();
-       }
+        document.getElementById("output").innerHTML = "Loading text...";
+        var output = document.getElementById('output');
+        var action = document.getElementById('action');
+        let recognition = new webkitSpeechRecognition();
+        
+        recognition.onstart = () => {
+            action.innerHTML = "Listening...";
+        };
+        
+        recognition.onresult = (e) => {
+            clearTimeout(recognitionTimeout); // Limpiar el temporizador cuando se recibe una entrada de voz
+        
+            transcript = e.results[0][0].transcript;
+            mensajeEscrito = true;        
+            if (primVez) {
+                transcript0 = transcript;
+            }
+            if (primVez) {
+                output.innerHTML = transcript + " " + "<img onclick='borrarMsj()' src='borrar.png' style='max-width: 5%; max-height: 5%;'>";
+                output.classList.remove("hide");
+                primVez = false;
+            } else {
+                escribirMensaje();
+            }
+        };
+        
+        recognition.onend = () => {
+            // Iniciar un temporizador de x segundos para detener la escucha si no hay entrada de voz
+            recognitionTimeout = setTimeout(() => {
+                listening = false;
+                recognition.stop();
+                updateMicIcon();
+                if (!primVez) {
+                    output.innerHTML = transcript0+ "<img onclick='borrarMsj()' src='borrar.png' style='max-width: 5%; max-height: 5%;'>";                   
+                }else{
+                    output.innerHTML = "";                    
+                }
+            }, 1);
+        };
+        
+        recognition.start();
     }
-    recognization.start();
- }
+    
  function escribirMensaje(){
         transcript0=transcript0+" "+transcript;
         output.innerHTML = " "+transcript0 + " " + "<img onclick='borrarMsj()' src='borrar.png' style='max-width: 5%; max-height: 5%;'>";

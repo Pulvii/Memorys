@@ -1,0 +1,53 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #333;
+  }
+  
+  .sound-bars {
+    display: flex;
+    gap: 5px; /* Espacio entre las barras */
+  }
+  
+  .sound-bar {
+    width: 10px; /* Ancho de las barras */
+    height: 60px; /* Altura de las barras */
+    background-color: #00f;
+    animation: soundEffect 0.9s infinite alternate;
+    animation-delay: calc(0.1s * var(--n)); /* Retraso asincrónico basado en la variable --n */
+  }
+  
+  @keyframes soundEffect {
+    0% {
+      transform: scaleY(1);
+    }
+    100% {
+      transform: scaleY(1.5);
+    }
+  }
+  
+  /* Aplica un valor diferente a --n para cada barra */
+  .sound-bar:nth-child(1) {
+    --n: 1;
+  }
+  
+  .sound-bar:nth-child(2) {
+    --n: 2;
+  }
+  
+  .sound-bar:nth-child(3) {
+    --n: 3;
+  }
+  .sound-bar:nth-child(4) {
+    --n: 4;
+  }
+  .sound-bar:nth-child(5) {
+    --n: 5;
+  }
+  .sound-bar:nth-child(6) {
+    --n: 6;
+  }
+  

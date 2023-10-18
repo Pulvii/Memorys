@@ -1,4 +1,3 @@
-<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -27,9 +26,10 @@
                 <img id="capturedImage" src="" alt="Captured Image" style="display: none;">
             </div>
         </div>
-        <center><div style="border: 2px solid black; border-radius: 50%; display: inline-block;">
+        <center><div style="border: 2px solid black; border-radius: 50%; display: inline-block;" id="sacarFoto">
             <button id="capturePhoto" type="button" style="border: transparent; background: none; padding: 0; border-radius: 50%;"><img src="camara.png" style="max-width: 100%; max-height: 100%; width: 50px; height: 50px; object-fit: cover; border-radius: 50%;"></button>   
         </div></center>
+        <center><h3 id="errorCamara" style="color: red; display: none;">CAMARA NO ENCONTRADA</h3></center>
         <br><br>
         <center>
             <div id="mic-container" style="border: 2px solid blue; border-radius: 50%; display: inline-block;">
@@ -39,14 +39,21 @@
             </div>
         </center>
         
-
+        <div  id="soundBar" class="sound-bars">
+            <div class="sound-bar"></div>
+            <div class="sound-bar"></div>
+            <div class="sound-bar"></div>
+            <div class="sound-bar"></div>
+            <div class="sound-bar"></div>
+            <div class="sound-bar"></div>
+        </div>
          <h3 id="output" id="nota" class="hide"></h3>
         <button type="submit">Subir</button>
         <button id="closeForm" type="button">Cerrar</button>
     </form>
 
 
-
+    <img id="imagenMostrada" src="imagenoencontrada.jpg" alt="Imagen Capturada" hidden>
     <footer>
         <p>&copy; 2023 Memorys</p>
     </footer>

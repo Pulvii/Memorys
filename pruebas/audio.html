@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <html>
+<head>
+   <title>Speech to text</title>
+</head>
+   <body>
+      <div class="speaker" style="display: flex;justify-content: space-between;width: 13rem;box-shadow: 0 0 13px #0000003d;border-radius: 5px;">
+         <p id="action" style="color: grey;font-weight: 800; padding: 0; padding-left: 2rem;"></p>
+         <button onclick="runSpeechRecog()" style="border: transparent;padding: 0 0.5rem;">
+            Speech
+         </button>
+      </div>
+      <h3 id="output" class="hide"></h3>
+      <script>
+            var transcript;
+            var transcript0;
+            var output = document.getElementById('output');
+            var primVez = true;
+
+         runSpeechRecog = () => {
+            document.getElementById("output").innerHTML = "Loading text...";
+            var output = document.getElementById('output');
+            var action = document.getElementById('action');
+            let recognization = new webkitSpeechRecognition();
+            recognization.onstart = () => {
+                    action.innerHTML = "Listening...";
+            }
+            recognization.onresult = (e) => {
+               transcript = e.results[0][0].transcript;
+
+                if(primVez){
+                    transcript0 = transcript;
+                }
+               if(primVez){
+                output.innerHTML = transcript;
+               output.classList.remove("hide")
+               action.innerHTML = "";
+               primVez=false;
+               } else{
+                escribirMensaje();
+               }
+            }
+            recognization.start();
+         }
+         function escribirMensaje(){
+                transcript0=transcript0+" "+transcript;
+                output.innerHTML = " "+transcript0;
+         }
+      </script>
+   </body>
+</html>
+</body>
+</html>

@@ -40,7 +40,7 @@ button:hover {
 .memoria {
   background-color: white;
   border: 1px solid #e0e4e8;
-  padding: 1.2rem;
+  padding: 1.8rem;
   border-radius: 10px;
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease;
@@ -267,6 +267,64 @@ form button:hover {
   height: 60px; /* Alto mayor */
   background: lightblue; /* Color de fondo azul claro */
 }
+
+
+
+#soundBar {
+  display: flex;
+  justify-content: center; /* Centrar horizontalmente */
+  align-items: center; /* Centrar verticalmente */
+  margin-top: 20px; /* Ajusta el valor según tus necesidades */
+}
+
+.sound-bars {
+  display: flex;
+  gap: 5px; /* Espacio entre las barras */
+}
+
+.sound-bar {
+  width: 10px; /* Ancho de las barras */
+  height: 60px; /* Altura de las barras */
+
+  background-color: #00f;
+  animation: soundEffect 0.9s infinite alternate;
+  animation-delay: calc(0.1s * var(--n)); /* Retraso asincrónico basado en la variable --n */
+}
+
+@keyframes soundEffect {
+  0% {
+    transform: scaleY(1);
+  }
+  100% {
+    transform: scaleY(1.5);
+  }
+}
+
+/* Aplica un valor diferente a --n para cada barra */
+.sound-bar:nth-child(1) {
+  --n: 1;
+}
+
+.sound-bar:nth-child(2) {
+  --n: 2;
+}
+
+.sound-bar:nth-child(3) {
+  --n: 3;
+}
+.sound-bar:nth-child(4) {
+  --n: 4;
+}
+.sound-bar:nth-child(5) {
+  --n: 5;
+}
+.sound-bar:nth-child(6) {
+  --n: 6;
+}
+
+
+
+
 
 
 
