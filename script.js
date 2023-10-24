@@ -88,7 +88,12 @@ function startCamera() {
     fotoSacada = false;
     mensajeEscrito = false;
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        const constraints = { video: true };
+        const constraints = {
+            video: {
+                width: { ideal: 1080 },
+                height: { ideal: 1350 },
+            },
+        };
         navigator.mediaDevices.getUserMedia(constraints)
             .then(function (mediaStream) {
                 stream = mediaStream;
@@ -116,6 +121,7 @@ function startCamera() {
         console.error("getUserMedia no está disponible en este navegador");
     }
 }
+
 
 // Función para detener la cámara
 function stopCamera() {
