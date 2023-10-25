@@ -1,9 +1,19 @@
+
 /* Estilos generales */
 body {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #f7f9fc;
+  background-color: #fbf7fc;
+}
+#titulo {
+  display: block;
+  font-size: 2em;
+  margin-block-start: 0.67em;
+  margin-block-end: 0.67em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+  font-weight: bold;
 }
 
 header {
@@ -22,7 +32,99 @@ header {
   align-items: center;
   padding: 10px;
   position: relative; /* Establece la posición relativa para posicionar elementos absolutos */
+  
 }
+
+.navbar {
+  background-color: rgba(129,5,240,1);
+  color: #fff;
+  padding: 10px;
+}
+
+.left {
+  float: left;
+}
+
+.right {
+  float: right;
+}
+#sidebar {
+  z-index: 998;
+  width: 69%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  right: -0%;
+  background-color: rgba(129,5,240,1);
+  padding-top: 60px;
+  transition: 0.3s;
+  transition: right 3.3s; /* Agregar una transición */
+}
+.profile {
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+.profile img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin-bottom: 10px;
+}
+
+.profile h2 {
+  font-size: 1.5em;
+  margin: 0;
+}
+
+.profile .user-info {
+  margin: 10px 0;
+}
+
+.profile .user-info span {
+  display: block;
+  color: #363636;
+}
+
+ul.nav-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+ul.nav-list li {
+  margin-bottom: 10px;
+}
+
+ul.nav-list a {
+  text-decoration: none;
+  color: #333;
+  font-weight: bold;
+}
+
+#sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+#sidebar ul li {
+  padding: 15px;
+}
+
+#sidebar ul li a {
+  color: #fff;
+  text-decoration: none;
+}
+
+#menu-toggle {
+  cursor: pointer;
+}
+
+
+
+
+
 
 /* Estilo para "MEMORYS" (elemento izquierdo) */
 .left {
@@ -31,7 +133,7 @@ header {
 
 /* Estilo para el ícono de las tres barras (elemento derecho) */
 .right i {
-
+  z-index: 999;
   font-size: 24px;
   cursor: pointer;
   position: absolute; /* Establece la posición absoluta */
@@ -98,7 +200,6 @@ button:hover {
 
 /* Estilos para la barra lateral de perfiles */
 #sidebar {
-  background-color: #ebebeb;
   padding: 1.5rem;
   border-radius: 10px;
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);

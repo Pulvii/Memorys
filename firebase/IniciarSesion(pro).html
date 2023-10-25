@@ -4,14 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-<script src="firebase.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-firestore.js"></script>
+    <script src="firebase.js"></script>
+
   </head>
 <body>
   
   
  
-  <button id="prueba12">HOLA</button>
     <center>
     <form class="form card">
         <div class="card_header">
@@ -23,15 +24,21 @@
         </div>
         <div class="field">
           <label for="username">Username</label>
-          <input class="input" name="username" type="text" placeholder="Username" id="username">
+          <input class="input" name="username" type="email" placeholder="Username" id="username" required>
+        </div>
+        <div class="field">
+          <label for="username">Mail</label>
+          <input class="input" name="username" type="text" placeholder="mail@gmail.com" id="mail" required>
         </div>
         <div class="field">
           <label for="password">Password</label>
-          <input class="input" name="user_password" type="password" placeholder="Password" id="password">
+          <input class="input" name="user_password" type="password" placeholder="Password" id="contrasenia" required>
         </div>
+
         <div class="field">
-          <button type="button" class="button" >Login</button>
+          <button type="button" onclick="datosEnviados()" class="button" >Sign in</button>
         </div>
+        <br><br>
       </form></center>
       <style>.card {
         width: 190px;
