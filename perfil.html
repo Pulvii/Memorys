@@ -24,7 +24,18 @@
             </div>
         </div>
     </header>
-
+    <div id="popup" class="popup">
+      <div class="popup-content">
+        <span class="close" onclick="cerrarPopup()">&times;</span>
+        <strong><p style="font-size:x-large">Editar Perfil</p></strong>
+        <h3>Nombre: nico</h3>
+        <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+        <!-- Aquí puedes agregar los campos de edición de perfil -->
+      </div>
+    </div>
+    <style>
+      
+    </style>
     <div id="sidebar" style="right: 100%; display: none;" >
         <div class="profile">
             <center>
@@ -94,8 +105,8 @@
         </div>
 
         <div class="grid grid-cols-1">
-            <button class="my-5 px-5 py-2 font-semibold text-sm border border-gray-400">Editar perfil</button>
-            </button>
+          <button class="my-5 px-5 py-2 font-semibold text-sm border border-gray-400" onclick="abrirPopup()">Editar perfil</button>
+        </button>
         </div>
  
         <center><p class="mb-3">Me gusta programar y las computadoras</p></center>
@@ -159,11 +170,86 @@
     width: 200px; /* Establece el ancho deseado para todas las imágenes */
     height: 150px; /* Establece la altura deseada para todas las imágenes */
     object-fit: cover; /* Opcional: para ajustar la imagen en el tamaño especificado */
-  }
+}
+/* Estilo para el fondo oscuro detrás del pop-up */
+.popup-background {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro con transparencia */
+  z-index: 1;
+}
+
+/* Estilo para el pop-up en sí */
+.popup {
+  display: none;
+  position: fixed;
+  bottom: 0; /* Coloca el pop-up en la parte inferior de la pantalla */
+  left: 0;
+  width: 100%; /* Ancho del pop-up al 100% de la pantalla */
+  max-height: 100%; /* Altura máxima al 100% de la pantalla */
+  background-color: white;
+  z-index: 2;
+  padding: 20px;
+  box-shadow: 0px -5px 10px rgba(0, 0, 0, 0.5); /* Desplazamiento hacia arriba */
+  transition: transform 0.5s; /* Agrega una transición suave de desplazamiento */
+  transform: translateY(100%); /* Inicialmente, el pop-up está fuera de la pantalla */
+}
+
+/* Estilo para el botón "X" de cierre */
+.close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+/* Estilo para el contenido dentro del pop-up */
+.popup-content {
+  text-align: center;
+}
+
   </style>  
 <!-- video grid end -->
-
- 
+<script>
+  function abrirPopup() {
+    const popup = document.getElementById("popup");
+    const popupBackground = document.getElementById("popup-background");
+  
+    popup.style.display = "block"; // Muestra el pop-up
+    setTimeout(() => {
+      popup.style.transform = "translateY(0)"; // Aplica el desplazamiento después de que el pop-up esté visible
+    }, 10); // Un pequeño retraso para asegurarse de que la transición se aplique
+    popupBackground.style.display = "block";
+  }
+  
+  function cerrarPopup() {
+    const popup = document.getElementById("popup");
+    const popupBackground = document.getElementById("popup-background");
+  
+    popup.style.transform = "translateY(100%)"; // Oculta el pop-up desplazándolo hacia abajo
+  
+    // Espera a que termine la transición antes de ocultar el pop-up
+    popup.addEventListener("transitionend", () => {
+      popup.style.display = "none";
+      popup.style.transform = ""; // Restablece el valor de transform para futuras aperturas
+    });
+    popupBackground.style.display = "none";
+  }
+  </script>
+  
+  
+  
+  
+  
+  
+  
+  
+   
  
 </div>
 
