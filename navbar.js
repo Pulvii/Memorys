@@ -32,3 +32,4 @@ document.getElementById("menu-toggle2").addEventListener("click", function () {
         document.getElementById("titulo").innerHTML = "MEMORYS";
     }
 });
+

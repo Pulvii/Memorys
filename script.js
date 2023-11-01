@@ -1,3 +1,11 @@
+
+
+
+  function borrarDatos() {
+    localStorage.clear();
+  }
+
+
 // Variables globales para la cámara y el stream
 let video = null;
 let stream = null;

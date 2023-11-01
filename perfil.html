@@ -6,6 +6,9 @@
     <title>Tiktok Profile Page</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-storage.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 <body>
@@ -13,7 +16,7 @@
     <header class="navbar" >
         <div>
             <div class="left">
-                <p id="titulo">MEMORYS</p>
+                <p id="titulo">MEMORIES</p>
             </div>
             <div class="right">
                 <i class="fas fa-bars" id="menu-toggle"></i>
@@ -24,18 +27,23 @@
 
     <div id="sidebar" style="right: 100%; display: none;" >
         <div class="profile">
-            <center><img src="perfil.jpg" alt="Foto de perfil"></center>
-            <h2>Tincho  Barb</h2>
+            <center>
+                <div id="fotoPerfil" class="w-20 h-20 bg-cover bg-top bg-no-repeat rounded-full" style="background-image: url(imagenoencontrada.jpg);">
+
+                  </div>
+                  
+            </center>
+            <h2 id="nombreUsuario">Usuario</h2>
             <div class="user-info">
-                <span>Seguidores: 1000</span>
-                <span>Seguidos: 500</span>
+                <span id="seguidores">Seguidores: 1000</span>
+                <span id="seguidos">Seguidos: 500</span>
             </div>
             <ul class="nav-list">
                 <li><a href="index.html">Inicio</a></li>
                 <li><a href="perfil.html">Perfil</a></li>
                 <li><a href="#">Agregar Amigos</a></li>
                 <li><a href="#">Opciones</a></li>
-                <li><a href="#">Cerrar Sesion</a></li>
+                <li><a href="IniciarSesion.html" onclick=borrarDatos()>Cerrar Sesion</a></li>
             </ul>
         </div>
     </div>
@@ -51,7 +59,7 @@
 
         </div>
         <a href="#" class="flex gap-1 items-center">
-            <span class="font-bold text-[17px]">Tincho Barb</span>
+            <span id="nombreUsuario2" class="font-bold text-[17px]">Usuario</span>
         </a>
         <div class="flex gap-1 px-4">
             <button>
@@ -63,23 +71,30 @@
  
     <!-- top header -->
     <div class="flex flex-col justify-center items-center my-5">
-        <div class="w-20 h-20 bg-cover bg-top bg-no-repeat rounded-full" style="background-image: url(perfil.jpg);"></div>
+        <div id="fotoPerfil2" class="w-20 h-20 bg-cover bg-top bg-no-repeat rounded-full" style="background-image: url(imagenoencontrada.jpg);"></div>
+        <input type="file" id="cargarFotoPerfil" accept="image/*" style="display: none;">
+       
+
+        <label for="cargarFotoPerfil" style="cursor: pointer;">
+          <i class="fas fa-camera"></i> 
+        </label>
+        
         <span class="my-3"></span>
  
         <div class="flex gap-10 text-sm">
             <div class="flex flex-col items-center">
-                <span class="font-bold">16</span>
+                <span id="seguidos2" class="font-bold">16</span>
                 <span style="color:#8A8B8F">Following</span>
             </div>
             <div class="flex flex-col items-center">
-                <span class="font-bold">2</span>
+                <span id="seguidores2" class="font-bold">2</span>
                 <span style="color:#8A8B8F">Followers</span>
             </div>
  
         </div>
 
         <div class="grid grid-cols-1">
-            <button class="my-5 px-5 py-2 font-semibold text-sm border border-gray-400">Edit profile</button>
+            <button class="my-5 px-5 py-2 font-semibold text-sm border border-gray-400">Editar perfil</button>
             </button>
         </div>
  
@@ -151,6 +166,106 @@
  
  
 </div>
+
+<script>const firebaseConfig = {
+    apiKey: "AIzaSyCpfhOnjmnpqGriQ2gnCEt0gSnWPJw63qI",
+    authDomain: "memorys-c7164.firebaseapp.com",
+    projectId: "memorys-c7164",
+    storageBucket: "memorys-c7164.appspot.com",
+    messagingSenderId: "287007507996",
+    appId: "1:287007507996:web:5408ee2a2c78b72ea941d9",
+    measurementId: "G-LRBSYE2205"
+  };
+  
+  const app = firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+  
+  var usuario = localStorage.getItem("nombreUsuario");
+
+  if (usuario) {
+    // Realiza una consulta para obtener los seguidores y seguidos del usuario
+    const usuariosRef = db.collection('Usuario');
+    usuariosRef.where('usuario', '==', usuario)
+      .get()
+      .then((querySnapshot) => {
+        if (querySnapshot.size > 0) {
+          const userData = querySnapshot.docs[0].data();
+          
+          const fotoPerfil = userData.fotoDePerfil;
+          // Obtén los seguidores y seguidos del usuario
+          const seguidores = userData.seguidores;
+          const seguidos = userData.seguidos;
+          // Almacena los datos en el LocalStorage
+          localStorage.setItem("seguidores", JSON.stringify(seguidores));
+          localStorage.setItem("seguidos", JSON.stringify(seguidos));
+          localStorage.setItem("fotoPerfil", fotoPerfil);
+        } else {
+          console.log("Usuario no encontrado en la base de datos");
+        }
+      })
+      .catch((error) => {
+        console.error('Error al consultar la base de datos:', error);
+      });
+  } else {
+    // Maneja el caso en el que el usuario no tiene un nombre de usuario en el LocalStorage
+    console.log("Usuario no autenticado");
+  }
+
+  var seguidores = localStorage.getItem("seguidores");
+  var seguidos = localStorage.getItem("seguidos");
+  var fotoPerf = localStorage.getItem("fotoPerfil");
+
+  document.getElementById("nombreUsuario").innerHTML = usuario;
+  document.getElementById("nombreUsuario2").innerHTML = usuario;
+  document.getElementById("seguidores").innerHTML = "Seguidores: " + seguidores;
+  document.getElementById("seguidos").innerHTML = "Seguidos: " + seguidos;
+  document.getElementById("seguidos2").innerHTML = seguidos;
+  document.getElementById("seguidores2").innerHTML = seguidores;
+  document.getElementById("fotoPerfil").style.backgroundImage = `url(${fotoPerf})`;
+  document.getElementById("fotoPerfil2").style.backgroundImage = `url(${fotoPerf})`;
+
+
+
+
+
+
+
+
+  const cargarFotoPerfil = document.getElementById("cargarFotoPerfil");
+
+cargarFotoPerfil.addEventListener("change", async (e) => {
+  const file = e.target.files[0];
+  if (file) {
+    // Subir la imagen a Firebase Storage
+    try {
+      const storageRef = firebase.storage().ref();
+      const imageRef = storageRef.child(`fotosPerfil/${usuario}/${file.name}`);
+      await imageRef.put(file);
+
+      // Obtener la URL de descarga de la imagen
+      const imagenURL = await imageRef.getDownloadURL();
+
+      // Almacenar la URL en la base de datos Firestore
+      const usuariosRef = db.collection('Usuario');
+      await usuariosRef.doc(usuario).update({
+        fotoDePerfil: imagenURL
+      });
+
+      // Actualizar la imagen en la página
+      const fotoPerfil = document.getElementById("fotoPerfil");
+      fotoPerfil.style.backgroundImage = `url(${imagenURL})`;
+      fotoPerfil2.style.backgroundImage = `url(${imagenURL})`;
+    } catch (error) {
+      console.error('Error al cargar la imagen:', error);
+    }
+  }
+});
+function borrarDatos() {
+    localStorage.clear();
+  }
+
+</script>
+
 <script src="navbar.js"></script>
 </body>
 </html>

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memories - Registrarse</title>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-firestore.js"></script>
+    <script src="firebaseCrearCuenta.js"></script>
+  </head>
+<body>
+  
+  <header class="navbar" >
+    <div>
+        <div class="left">
+            <h1 id="titulo">MEMORIES</h1>
+        </div>
+        <div class="right">
+            <i class="fas fa-bars" id="menu-toggle"></i>
+            <i class="fas fa-bars" id="menu-toggle2" style="display: none; position: fixed;"></i>
+        </div>
+    </div>
+</header>
+  <br><br><br>
+    <center>
+    <form class="form card">
+        <div class="card_header">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+            <path fill="none" d="M0 0h24v24H0z"></path>
+            <path fill="currentColor" d="M4 15h2v5h12V4H6v5H4V3a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-6zm6-4V8l5 4-5 4v-3H2v-2h8z"></path>
+          </svg>
+          <h1 class="form_heading">Registrarse</h1>
+        </div>
+        <div class="field">
+          <label for="username">Nombre</label>
+          <input class="input" name="nombre" type="text" placeholder="Nombre" id="nombre" required>
+        </div>
+        <div class="field">
+          <label for="username">Usuario</label>
+          <input class="input" name="username" type="email" placeholder="Username" id="username" required>
+          <p id="userError"  style="display: none; color: red;font-size: small;margin-bottom: 0px;">El nombre de usuario ya esta en uso</p>
+        </div>
+        <div class="field">
+          <label for="username">Mail</label>
+          <input class="input" name="username" type="text" placeholder="mail@gmail.com" id="mail" required>
+          <p id="mailError"  style="display: none; color: red;font-size: small;margin-bottom: 0px;">El mail ya esta en uso</p>      
+        </div>
+        <div class="field">
+          <label for="password">Contraseña</label>
+          <input class="input" name="user_password" type="password" placeholder="Password" id="contrasenia" required>
+          <p id="contraError"  style="display: none; color: red;font-size: small;margin-bottom: 0px;">La contraseña no puede estar en blanco</p>      
+        </div>
+
+        <div class="field" style="padding-bottom: 0px;">
+          <button type="button" onclick="datosEnviados()" class="button">Registrarse</button>
+        </div>
+        <p style="color: #7878bd; text-decoration: underline;" ><a href="IniciarSesion.html">Iniciar Sesion</a></p>
+
+      </form>    
+    </center>
+
+      <style>.card {
+        width: 190px;
+        height: 414px;
+        background: #F4F6FB;
+        border: 1px solid white;
+        box-shadow: 10px 10px 64px 0px rgba(180, 180, 207, 0.75);
+        -webkit-box-shadow: 10px 10px 64px 0px rgba(186, 186, 202, 0.75);
+        -moz-box-shadow: 10px 10px 64px 0px rgba(208, 208, 231, 0.75);
+      }
+      
+      .form {
+        padding: 25px;
+      }
+      
+      .card_header {
+        display: flex;
+        align-items: center;
+      }
+      
+      .card svg {
+        color: #7878bd;
+        margin-bottom: 20px;
+        margin-right: 5px;
+      }
+      
+      .form_heading {
+        padding-bottom: 20px;
+        font-size: 21px;
+        color: #7878bd;
+      }
+      
+      .field {
+        padding-bottom: 10px;
+      }
+      
+      .input {
+        border-radius: 5px;
+        background-color: #e9e9f7;
+        padding: 5px;
+        width: 100%;
+        color: #7a7ab3;
+        border: 1px solid #dadaf7
+      }
+      
+      .input:focus-visible {
+        outline: 1px solid #aeaed6;
+      }
+      
+      .input::placeholder {
+        color: #bcbcdf;
+      }
+      
+      label {
+        color: #B2BAC8;
+        font-size: 14px;
+        display: block;
+        padding-bottom: 4px;
+      }
+      
+      button {
+        background-color: #7878bd;
+        margin-top: 10px;
+        font-size: 14px;
+        padding: 7px 12px;
+        height: auto;
+        font-weight: 500;
+        color: white;
+        border: none;
+      }
+      
+      button:hover {
+        background-color: #5f5f9c;
+      }
+      
+      /* Estilos generales */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f7f9fc;
+}
+header {
+  background-color: #663399;
+  color: white;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  position: relative; /* Establece la posición relativa para posicionar elementos absolutos */
+  
+}
+
+.navbar {
+  background-color: rgba(129,5,240,1);
+  color: #fff;
+  padding: 10px;
+}
+
+.left {
+  float: left;
+}
+
+.right {
+  float: right;
+}
+#sidebar {
+  z-index: 998;
+  width: 69%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  right: -0%;
+  background-color: rgba(129,5,240,1);
+  padding-top: 60px;
+  transition: 0.3s;
+  transition: right 3.3s; /* Agregar una transición */
+}
+.profile {
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  text-align: center;
+}
+
+.profile img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin-bottom: 10px;
+}
+
+.profile h2 {
+  font-size: 1.5em;
+  margin: 0;
+}
+
+.profile .user-info {
+  margin: 10px 0;
+}
+
+.profile .user-info span {
+  display: block;
+  color: #363636;
+}
+
+ul.nav-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+ul.nav-list li {
+  margin-bottom: 10px;
+}
+
+ul.nav-list a {
+  text-decoration: none;
+  color: #333;
+  font-weight: bold;
+}
+
+#sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+#sidebar ul li {
+  padding: 15px;
+}
+
+#sidebar ul li a {
+  color: #fff;
+  text-decoration: none;
+}
+
+#menu-toggle {
+  cursor: pointer;
+}
+
+/* Estilo para "MEMORYS" (elemento izquierdo) */
+.left {
+  flex: 1; /* Toma todo el espacio disponible para expandir "MEMORYS" */
+}
+
+/* Estilo para el ícono de las tres barras (elemento derecho) */
+.right i {
+  z-index: 999;
+  font-size: 24px;
+  cursor: pointer;
+  position: absolute; /* Establece la posición absoluta */
+  top: 36px; /* Posiciona el ícono 10px desde la parte ssuperior */
+  right: 10px; /* Posiciona el ícono 10px desde la derecha */
+}
+
+/* Media query para ajustar la posición en pantallas pequeñas */
+@media (max-width: 768px) {
+  .right i {
+      top: 36px; /* Ajusta la posición superior para pantallas pequeñas */
+      right: 10px; /* Ajusta la posición derecha para pantallas pequeñas */
+  }
+}
+
+      </style>
+
+
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+</html>

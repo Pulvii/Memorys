@@ -2,8 +2,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css">
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-storage.js"></script>
+
     <script src="script.js" defer></script>
-    <title>MEMORYS</title>
+    <title>MEMORIES</title>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     </head>
 <body>
@@ -21,18 +25,18 @@
 
     <div id="sidebar" style="right: 100%; display: none;" >
         <div class="profile">
-            <img src="perfil.jpg" alt="Foto de perfil">
-            <h2>Tincho  Barb</h2>
+            <img id="fotoPerfil" src="imagenoencontrada.jpg" alt="Foto de perfil">
+            <h2 id="nombreUsuario">Usuario</h2>
             <div class="user-info">
-                <span>Seguidores: 1000</span>
-                <span>Seguidos: 500</span>
+                <span id="seguidores" >Seguidores: 1000</span>
+                <span id="seguidos">Seguidos: 500</span>
             </div>
             <ul class="nav-list">
                 <li><a href="index.html">Inicio</a></li>
                 <li><a href="perfil.html">Perfil</a></li>
                 <li><a href="#">Agregar Amigos</a></li>
                 <li><a href="#">Opciones</a></li>
-                <li><a href="#">Cerrar Sesion</a></li>
+                <li><a href="IniciarSesion.html" onclick=borrarDatos()>Cerrar Sesion</a></li>
             </ul>
         </div>
     </div>
@@ -95,7 +99,61 @@
 
 
 
+<script>
+    const firebaseConfig = {
+    apiKey: "AIzaSyCpfhOnjmnpqGriQ2gnCEt0gSnWPJw63qI",
+    authDomain: "memorys-c7164.firebaseapp.com",
+    projectId: "memorys-c7164",
+    storageBucket: "memorys-c7164.appspot.com",
+    messagingSenderId: "287007507996",
+    appId: "1:287007507996:web:5408ee2a2c78b72ea941d9",
+    measurementId: "G-LRBSYE2205"
+  };
+  
+  const app = firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+  
+  var usuario = localStorage.getItem("nombreUsuario");
 
+  if (usuario) {
+    // Realiza una consulta para obtener los seguidores y seguidos del usuario
+    const usuariosRef = db.collection('Usuario');
+    usuariosRef.where('usuario', '==', usuario)
+      .get()
+      .then((querySnapshot) => {
+        if (querySnapshot.size > 0) {
+          const userData = querySnapshot.docs[0].data();
+          
+          // Obtén los seguidores y seguidos del usuario
+          const seguidores = userData.seguidores;
+          const seguidos = userData.seguidos;
+          const fotoPerf = userData.fotoDePerfil;
+          // Almacena los datos en el LocalStorage
+          localStorage.setItem("seguidores", JSON.stringify(seguidores));
+          localStorage.setItem("seguidos", JSON.stringify(seguidos));
+          localStorage.setItem("fotoPerfil", fotoPerf);
+          document.getElementById("nombreUsuario").innerHTML = usuario;
+  document.getElementById("seguidores").innerHTML = "Seguidores: " + seguidores;
+  document.getElementById("seguidos").innerHTML = "Seguidos: " + seguidos;
+  document.getElementById("fotoPerfil").src = fotoPerf;
+        } else {
+          console.log("Usuario no encontrado en la base de datos");
+        }
+      })
+      .catch((error) => {
+        console.error('Error al consultar la base de datos:', error);
+      });
+  } else {
+    // Maneja el caso en el que el usuario no tiene un nombre de usuario en el LocalStorage
+    console.log("Usuario no autenticado");
+  }
+
+  var seguidores = localStorage.getItem("seguidores");
+  var seguidos = localStorage.getItem("seguidos");
+  var fotoPerf = localStorage.getItem("fotoPerfil");
+
+
+</script>
 
 <script src="navbar.js"></script>
 </body>
