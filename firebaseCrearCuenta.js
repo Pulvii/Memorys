@@ -38,7 +38,8 @@ async function datosEnviados() {
         contrasenia: hashHex, // Almacena el hash de la contraseña en lugar de la original
         seguidos: 0,
         seguidores: 0,
-        provicional: contrasenia
+        provicional: contrasenia,
+        descripcion: ""
       };
 
       const usuariosRef = db.collection('Usuario');

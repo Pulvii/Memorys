@@ -27,12 +27,35 @@
     <div id="popup" class="popup">
       <div class="popup-content">
         <span class="close" onclick="cerrarPopup()">&times;</span>
-        <strong><p style="font-size:x-large">Editar Perfil</p></strong>
-        <h3>Nombre: nico</h3>
-        <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-        <!-- Aquí puedes agregar los campos de edición de perfil -->
+        <h1>Editar Perfil</h1>
+        <center><div id="fotoPerfil3" class="w-20 h-20 bg-cover bg-top bg-no-repeat rounded-full" style="background-image: url(imagenoencontrada.jpg);">
+          <input type="file" id="cargarFotoPerfil" accept="image/*" style="display: none;">
+          <label for="cargarFotoPerfil" style="cursor: pointer;">
+            <br>
+            <br>
+          </label>
+        </div></center>
+          <br><br>
+        <form>
+          <div class="form-group">
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombreinput" placeholder="Nombre" class="input-field" style="margin-bottom: 0px;">
+          </div>
+          <div class="form-group">
+            <label for="nombre">Descripcion:</label>
+            <input type="text" id="descinput" placeholder="Descripcion" class="input-field" style="margin-bottom: 0px;">
+          </div>
+          <div class="form-group">
+            <label for="mail">Mail:</label>
+            <input type="email" id="mailinput" placeholder="mail" class="input-field">
+          </div>
+
+          <button onclick="actualizarPerfil()" type="button" style="background-color: rgba(129,5,240,1); color: white; border: none; padding: 10px 20px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; margin: 4px 2px; cursor: pointer;">Actualizar</button>
+        </form>
+        <br><br><br><br><br><br><br><br><br><br><br><br><br>
       </div>
     </div>
+    
     <style>
       
     </style>
@@ -83,12 +106,7 @@
     <!-- top header -->
     <div class="flex flex-col justify-center items-center my-5">
         <div id="fotoPerfil2" class="w-20 h-20 bg-cover bg-top bg-no-repeat rounded-full" style="background-image: url(imagenoencontrada.jpg);"></div>
-        <input type="file" id="cargarFotoPerfil" accept="image/*" style="display: none;">
-       
 
-        <label for="cargarFotoPerfil" style="cursor: pointer;">
-          <i class="fas fa-camera"></i> 
-        </label>
         
         <span class="my-3"></span>
  
@@ -109,7 +127,7 @@
         </button>
         </div>
  
-        <center><p class="mb-3">Me gusta programar y las computadoras</p></center>
+        <center><p class="mb-3" id="descr"></p></center>
     </div>
     <!-- top header end -->
  
@@ -212,35 +230,59 @@
 .popup-content {
   text-align: center;
 }
+h1 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
 
+.form-group {
+  margin-bottom: 20px;
+}
+
+label {
+  font-size: 16px;
+  display: block;
+}
+
+.input-field {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  outline: none;
+}
   </style>  
 <!-- video grid end -->
-<script>
+<script> 
+  var myTimeOut;
   function abrirPopup() {
+
     const popup = document.getElementById("popup");
-    const popupBackground = document.getElementById("popup-background");
-  
-    popup.style.display = "block"; // Muestra el pop-up
-    setTimeout(() => {
-      popup.style.transform = "translateY(0)"; // Aplica el desplazamiento después de que el pop-up esté visible
-    }, 10); // Un pequeño retraso para asegurarse de que la transición se aplique
-    popupBackground.style.display = "block";
+    popup.style.transform = "translateY(0)";
+
+      popup.style.display = "block"; 
+    console.log(popup.style.display);
+    document.getElementById("menu-toggle").style.display = "none";
+
   }
-  
+
   function cerrarPopup() {
+    document.getElementById("menu-toggle").style.display = "block";
+    console.log("cerrar");
     const popup = document.getElementById("popup");
-    const popupBackground = document.getElementById("popup-background");
-  
+
     popup.style.transform = "translateY(100%)"; // Oculta el pop-up desplazándolo hacia abajo
-  
+
     // Espera a que termine la transición antes de ocultar el pop-up
     popup.addEventListener("transitionend", () => {
       popup.style.display = "none";
-      popup.style.transform = ""; // Restablece el valor de transform para futuras aperturas
-    });
-    popupBackground.style.display = "none";
+      popup.style.transform = ""; 
+    }); 
   }
-  </script>
+
+</script>
+  
   
   
   
@@ -281,10 +323,16 @@
           // Obtén los seguidores y seguidos del usuario
           const seguidores = userData.seguidores;
           const seguidos = userData.seguidos;
+          const mail = userData.mail;
+          const descripcion = userData.descripcion;
+
           // Almacena los datos en el LocalStorage
           localStorage.setItem("seguidores", JSON.stringify(seguidores));
           localStorage.setItem("seguidos", JSON.stringify(seguidos));
           localStorage.setItem("fotoPerfil", fotoPerfil);
+          localStorage.setItem("mail", mail);
+          localStorage.setItem("descripcion", descripcion);
+
         } else {
           console.log("Usuario no encontrado en la base de datos");
         }
@@ -301,6 +349,7 @@
   var seguidos = localStorage.getItem("seguidos");
   var fotoPerf = localStorage.getItem("fotoPerfil");
 
+
   document.getElementById("nombreUsuario").innerHTML = usuario;
   document.getElementById("nombreUsuario2").innerHTML = usuario;
   document.getElementById("seguidores").innerHTML = "Seguidores: " + seguidores;
@@ -309,6 +358,14 @@
   document.getElementById("seguidores2").innerHTML = seguidores;
   document.getElementById("fotoPerfil").style.backgroundImage = `url(${fotoPerf})`;
   document.getElementById("fotoPerfil2").style.backgroundImage = `url(${fotoPerf})`;
+  document.getElementById("fotoPerfil3").style.backgroundImage = `url(${fotoPerf})`;
+  document.getElementById("mailinput").placeholder = localStorage.getItem("mail");
+  document.getElementById("descinput").placeholder = localStorage.getItem("descripcion");
+
+
+  document.getElementById("nombreinput").placeholder = usuario;
+;
+
 
 
 
@@ -341,14 +398,97 @@ cargarFotoPerfil.addEventListener("change", async (e) => {
       const fotoPerfil = document.getElementById("fotoPerfil");
       fotoPerfil.style.backgroundImage = `url(${imagenURL})`;
       fotoPerfil2.style.backgroundImage = `url(${imagenURL})`;
+      fotoPerfil3.style.backgroundImage = `url(${imagenURL})`;
     } catch (error) {
       console.error('Error al cargar la imagen:', error);
     }
   }
 });
-function borrarDatos() {
+  function borrarDatos() {
     localStorage.clear();
   }
+
+
+  function actualizarPerfil() {
+  const nombreActualizado = document.getElementById("nombreinput").value;
+  const mailActualizado = document.getElementById("mailinput").value;
+  const descActualizado = document.getElementById("descinput").value;
+
+  var usuario = localStorage.getItem("nombreUsuario");
+
+  if (nombreActualizado || contraActualizado || mailActualizado || descActualizado) {
+    // Crea un objeto con los campos que se desean actualizar
+    const camposActualizados = {};
+
+    if (nombreActualizado) {
+      camposActualizados.nombre = nombreActualizado;
+    }
+
+    if (mailActualizado) {
+      camposActualizados.mail = mailActualizado;
+    }
+    if (descActualizado) {
+      camposActualizados.descripcion = descActualizado;
+    }
+
+    // Genera un nuevo nombre de usuario (si es diferente)
+    const nuevoNombreUsuario = document.getElementById("nombreinput").value;
+
+    if (nuevoNombreUsuario && nuevoNombreUsuario !== usuario) {
+      // Obtiene los datos existentes del usuario actual
+      const usuarioRef = db.collection("Usuario").doc(usuario);
+      usuarioRef.get()
+        .then((doc) => {
+          if (doc.exists) {
+            const datosUsuarioActual = doc.data();
+            // Combina los datos existentes con los datos actualizados
+            const datosCombinados = { ...datosUsuarioActual, ...camposActualizados };
+
+            // Crea un nuevo documento con el nuevo nombre de usuario y los datos combinados
+            const nuevoUsuarioRef = db.collection("Usuario").doc(nuevoNombreUsuario);
+            nuevoUsuarioRef.set(datosCombinados)
+              .then(() => {
+                console.log("Perfil actualizado exitosamente");
+
+                // Borra el documento anterior (opcional)
+                usuarioRef.delete()
+                  .then(() => {
+                    console.log("Documento anterior eliminado exitosamente");
+                  })
+                  .catch((error) => {
+                    console.error("Error al eliminar el documento anterior:", error);
+                  });
+              })
+              .catch((error) => {
+                console.error("Error al crear el nuevo documento:", error);
+              });
+          }
+        })
+        .catch((error) => {
+          console.error("Error al obtener los datos del usuario actual:", error);
+        });
+    } else {
+      // Actualiza los campos en el documento existente si no se cambió el nombre de usuario
+      const usuarioRef = db.collection("Usuario").doc(usuario);
+      usuarioRef.update(camposActualizados)
+        .then(() => {
+          console.log("Perfil actualizado exitosamente");
+          localStorage.setItem("nombreUsuario", nombreActualizado);
+          
+
+        })
+        .catch((error) => {
+          console.error("Error al actualizar el perfil:", error);
+        });
+    }
+  } else {
+    // No se realizará ninguna actualización ya que no hay valores nuevos para guardar.
+  }
+}
+
+
+
+
 
 </script>
 

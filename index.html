@@ -133,9 +133,9 @@
           localStorage.setItem("seguidos", JSON.stringify(seguidos));
           localStorage.setItem("fotoPerfil", fotoPerf);
           document.getElementById("nombreUsuario").innerHTML = usuario;
-  document.getElementById("seguidores").innerHTML = "Seguidores: " + seguidores;
-  document.getElementById("seguidos").innerHTML = "Seguidos: " + seguidos;
-  document.getElementById("fotoPerfil").src = fotoPerf;
+          document.getElementById("seguidores").innerHTML = "Seguidores: " + seguidores;
+           document.getElementById("seguidos").innerHTML = "Seguidos: " + seguidos;
+            document.getElementById("fotoPerfil").src = fotoPerf;
         } else {
           console.log("Usuario no encontrado en la base de datos");
         }
