@@ -5,6 +5,40 @@
     localStorage.clear();
   }
 
+// ID del documento que contiene las memorias
+const documentoId = "MemoriesPublicas";
+
+// Obtener la referencia del documento que contiene las memorias
+const documentoRef = db.collection('Usuario').doc(documentoId);
+
+// Escuchar cambios en el documento
+documentoRef.onSnapshot((doc) => {
+    if (doc.exists) {
+        const data = doc.data();
+        const publicaciones = data.Publicaciones || [];
+
+        // Limpia el feed antes de agregar las nuevas memorias
+        const feed = document.getElementById("feed");
+        feed.innerHTML = "";
+
+        // Agrega las memorias al feed
+        publicaciones.forEach((memoria, index) => {
+            usuarios.push({ id: index+1, usuario: memoria.id,nombre:memoria.nombre, fotoPerfil: memoria.fotoPerf });
+            agregarMemoriaAlFeed({
+                id: index + 1, // Puedes ajustar la lógica de generación de IDs
+                usuarioId: memoria.id, // Puedes ajustar el usuarioId según tus necesidades
+                tipo: "foto", // Puedes obtener el tipo de memoria de otro campo si es necesario
+                contenido: memoria.linkFoto,
+                nota: memoria.texto,
+            });
+        });
+    } else {
+        console.log("El documento no existe");
+    }
+});
+
+
+
 
 // Variables globales para la cámara y el stream
 let video = null;
@@ -20,25 +54,26 @@ soundBar.style.display = "none";
 
 // Simulando datos de usuarios y memorias
 const usuarios = [
-    { id: 1, nombre: "Martin Tincho", fotoPerfil: "perfil.jpg" },
-    { id: 2, nombre: "Barbery", fotoPerfil: "perfil2.jpg" }
+    { id: 1, usuario:" " , nombre: "Martin Tincho", fotoPerfil: "perfil.jpg" },
+    { id: 2, usuario:" " , nombre: "Barbery", fotoPerfil: "perfil2.jpg" }
 ];
 
 const memorias = [
-    { id: 1, usuarioId: 1, tipo: "foto", contenido: "image.jpg", nota: "ACA EN EL PARQUE PROGRAMANDO" },
-    { id: 2, usuarioId: 2, tipo: "video", contenido: "image2.jpg", nota: "En la playa tirándome de clavado (MIENTRAS PROGRAMO)" }
 ];
+
+
 
 // Función para crear y agregar una memoria al feed
 function agregarMemoriaAlFeed(memoria) {
-    const usuario = usuarios.find(u => u.id === memoria.usuarioId);
+    uploadForm.classList.add("hidden");
+    const usuario = usuarios.find(u => u.usuario === memoria.usuarioId);
     const memoriaElement = document.createElement("div");
     memoriaElement.classList.add("memoria", "flip-container");
     memoriaElement.innerHTML = `
         <div class="flipper">
             <div class="back">
                 <img src="${usuario.fotoPerfil}" alt="${usuario.nombre}" class="profile-pic">
-                <p>${usuario.nombre}</p>
+                <p style="font-size: x-large;font-weight: bold;">${usuario.nombre}</p>
                 <p>${memoria.nota}</p>
             </div>
             <div class="front">
@@ -162,45 +197,76 @@ capturePhotoButton.addEventListener("click", () => {
     }
 });
 
-// Manejar envío del formulario
-uploadForm.addEventListener("submit", (e) => {
+
+// Función para manejar el envío del formulario
+uploadForm.addEventListener("submit", async (e) => {
     e.preventDefault();
-    
+
     // Obtener los valores del formulario
-    const usuarioId = usuarioIdInput.value;
     const tipo = "foto";
-    var contenido;
-    var nota;
+    let contenido;
+    let nota;
     if (fotoSacada) {
-     contenido = capturedImage.src; // Usar la imagen capturada como contenido
-    } else{
+        contenido = capturedImage.src; // Usar la imagen capturada como contenido
+    } else {
         contenido = document.getElementById('imagenMostrada').src;
     }
     if (mensajeEscrito) {
         nota = transcript0;
         transcript0 = "";
-    }else{
+    } else {
         nota = " ";
     }
     primVez = true;
     var output = document.getElementById('output').innerHTML = " ";
-    // Verificar si el usuario existe
-    const usuario = findUserById(usuarioId);
 
-    if (!usuario) {
-        // Si el usuario no existe, mostrar una alerta
-        alert("El usuario no existe. Verifica el ID de usuario.");
-        return; // No subir la memoria si el usuario no existe
-    }
+    // Verificar si el usuario existe
+    var usuarioLocal = localStorage.getItem("nombreUsuario");
+
+
+
+    // Comprimir la imagen antes de subirla
+    const maxImageSize = 500; // Establece el tamaño máximo que deseas para la imagen (puedes ajustarlo según tus necesidades)
+    const compressedImage = await compressImage(contenido, maxImageSize);
 
     // Crear un objeto memoria con los datos del formulario
     const nuevaMemoria = {
         id: memorias.length + 1,
         usuarioId: usuario.id, // Asociar el ID del usuario
         tipo: tipo,
-        contenido: contenido,
+        contenido: compressedImage, // Utiliza la imagen comprimida
         nota: nota
     };
+
+    // Actualizar el documento del usuario en Firestore para agregar la nueva memoria
+    try {
+        const usuarioRef = db.collection('Usuario').doc(usuarioLocal);
+        await usuarioRef.update({
+            Publicaciones: firebase.firestore.FieldValue.arrayUnion({ // Agrega el mapa al array
+                linkFoto: compressedImage, // Enlace a la imagen en Firestore
+                texto: nota // Texto asociado a la memoria
+            })
+        });
+        console.log("Memoria agregada al array de Publicaciones en Firestore");
+    } catch (error) {
+        console.error("Error al agregar memoria a Firestore:", error);
+    }
+
+    try {
+        const usuarioRef = db.collection('Usuario').doc("MemoriesPublicas");
+        await usuarioRef.update({
+            Publicaciones: firebase.firestore.FieldValue.arrayUnion({ // Agrega el mapa al array
+                linkFoto: compressedImage, // Enlace a la imagen en Firestore
+                texto: nota, // Texto asociado a la memoria
+                id: localStorage.getItem("usuario"),
+                nombre: localStorage.getItem("nombre"),
+                fotoPerf: localStorage.getItem("fotoDePerfil")
+            })
+        });
+        console.log("Memoria agregada al array de Publicaciones en Firestore");
+    } catch (error) {
+        console.error("Error al agregar memoria a Firestore:", error);
+    }
 
     // Agregar la nueva memoria al feed
     agregarMemoriaAlFeed(nuevaMemoria);
@@ -210,7 +276,45 @@ uploadForm.addEventListener("submit", (e) => {
 
     // También puedes enviar los datos al servidor o realizar otras acciones según tus necesidades
 });
-    //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
+
+// Función para comprimir la imagen
+async function compressImage(imageSrc, maxSize) {
+    return new Promise((resolve) => {
+        const img = new Image();
+        img.src = imageSrc;
+
+        img.onload = () => {
+            let width = img.width;
+            let height = img.height;
+
+            // Verifica si la imagen supera el tamaño máximo
+            if (width > maxSize || height > maxSize) {
+                if (width > height) {
+                    height *= maxSize / width;
+                    width = maxSize;
+                } else {
+                    width *= maxSize / height;
+                    height = maxSize;
+                }
+            }
+
+            const canvas = document.createElement("canvas");
+            canvas.width = width;
+            canvas.height = height;
+
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, width, height);
+
+            // Convierte la imagen comprimida a un Data URL (base64)
+            const compressedImage = canvas.toDataURL("image/jpeg", 0.8); // Ajusta la calidad de compresión según tus necesidades
+
+            resolve(compressedImage);
+        };
+    });
+}
+
+
+
 
 
 
@@ -298,3 +402,5 @@ uploadForm.addEventListener("submit", (e) => {
     primVez = true;
     transcript0 = " ";
  }
+
+ 

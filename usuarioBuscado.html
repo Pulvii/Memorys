@@ -24,37 +24,7 @@
             </div>
         </div>
     </header>
-    <div id="popup" class="popup">
-      <div class="popup-content">
-        <span class="close" onclick="cerrarPopup()">&times;</span>
-        <h1>Editar Perfil</h1>
-        <center><div id="fotoPerfil3" class="w-20 h-20 bg-cover bg-top bg-no-repeat rounded-full" style="background-image: url(imagenoencontrada.jpg);">
-          <input type="file" id="cargarFotoPerfil" accept="image/*" style="display: none;">
-          <label for="cargarFotoPerfil" style="cursor: pointer;">
-            <br>
-            <br>
-          </label>
-        </div></center>
-          <br><br>
-        <form>
-          <div class="form-group">
-            <label for="nombre">Nombre:</label>
-            <input type="text" id="nombreinput" placeholder="Nombre" class="input-field" style="margin-bottom: 0px;">
-          </div>
-          <div class="form-group">
-            <label for="nombre">Descripcion:</label>
-            <input type="text" id="descinput" placeholder="Descripcion" class="input-field" style="margin-bottom: 0px;">
-          </div>
-          <div class="form-group">
-            <label for="mail">Mail:</label>
-            <input type="email" id="mailinput" placeholder="mail" class="input-field">
-          </div>
 
-          <button onclick="actualizarPerfil()" type="button" style="background-color: rgba(129,5,240,1); color: white; border: none; padding: 10px 20px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; margin: 4px 2px; cursor: pointer;">Actualizar</button>
-        </form>
-        <br><br><br><br><br><br><br><br><br><br><br><br><br>
-      </div>
-    </div>
     
     <style>
       
@@ -68,7 +38,7 @@
                   </div>
                   
             </center>
-            <h2 id="nombreUsuario">Usuario</h2>
+            <h2 id="nombreUsuario"></h2>
             <div class="user-info">
               <span id="seguidores">Seguidores: 1000</span>
                 <span id="seguidos">Seguidos: 500</span>
@@ -94,7 +64,7 @@
 
         </div>
         <a href="#" class="flex gap-1 items-center">
-            <span id="nombre" class="font-bold text-[17px]">Usuario</span>      
+            <span id="nombre" class="font-bold text-[17px]"></span>      
           </a>
         <div class="flex gap-1 px-4">
             <button>
@@ -113,18 +83,18 @@
  
         <div class="flex gap-10 text-sm">
             <div class="flex flex-col items-center">
-                <span id="seguidos2" class="font-bold">16</span>
+                <span id="seguidos2" class="font-bold"></span>
                 <span style="color:#8A8B8F">Following</span>
             </div>
             <div class="flex flex-col items-center">
-                <span id="seguidores2" class="font-bold">2</span>
+                <span id="seguidores2" class="font-bold"></span>
                 <span style="color:#8A8B8F">Followers</span>
             </div>
  
         </div>
 
         <div class="grid grid-cols-1">
-          <button class="my-5 px-5 py-2 font-semibold text-sm border border-gray-400" onclick="abrirPopup()">Editar Perfil</button>
+          <button class="my-5 px-5 py-2 font-semibold text-sm border border-gray-400" onclick="seguirUsuario()">Seguir</button>
         </button>
         </div>
  
@@ -230,34 +200,7 @@ label {
 }
   </style>  
 <!-- video grid end -->
-<script> 
-  var myTimeOut;
-  function abrirPopup() {
 
-    const popup = document.getElementById("popup");
-    popup.style.transform = "translateY(0)";
-
-      popup.style.display = "block"; 
-    console.log(popup.style.display);
-    document.getElementById("menu-toggle").style.display = "none";
-
-  }
-
-  function cerrarPopup() {
-    document.getElementById("menu-toggle").style.display = "block";
-    console.log("cerrar");
-    const popup = document.getElementById("popup");
-
-    popup.style.transform = "translateY(100%)"; // Oculta el pop-up desplazándolo hacia abajo
-
-    // Espera a que termine la transición antes de ocultar el pop-up
-    popup.addEventListener("transitionend", () => {
-      popup.style.display = "none";
-      popup.style.transform = ""; 
-    }); 
-  }
-
-</script>
   
   
   
@@ -283,7 +226,7 @@ label {
   
   const app = firebase.initializeApp(firebaseConfig);
   const db = firebase.firestore();
-  
+  var usuarioBuscado = new URLSearchParams(window.location.search).get('username');
   var usuario = localStorage.getItem("nombreUsuario");
 
   if (usuario) {
@@ -316,6 +259,8 @@ label {
       .catch((error) => {
         console.error('Error al consultar la base de datos:', error);
       });
+
+      
   } else {
     // Maneja el caso en el que el usuario no tiene un nombre de usuario en el LocalStorage
     console.log("Usuario no autenticado");
@@ -329,120 +274,48 @@ label {
   document.getElementById("nombreUsuario").innerHTML = usuario;
   document.getElementById("seguidores").innerHTML = "Seguidores: " + seguidores;
   document.getElementById("seguidos").innerHTML = "Seguidos: " + seguidos;
-  document.getElementById("seguidos2").innerHTML = seguidos;
-  document.getElementById("seguidores2").innerHTML = seguidores;
   document.getElementById("fotoPerfil").style.backgroundImage = `url(${fotoPerf})`;
-  document.getElementById("fotoPerfil2").style.backgroundImage = `url(${fotoPerf})`;
-  document.getElementById("fotoPerfil3").style.backgroundImage = `url(${fotoPerf})`;
-  document.getElementById("mailinput").placeholder = localStorage.getItem("mail");
-  document.getElementById("descinput").placeholder = localStorage.getItem("descripcion");
-  document.getElementById("descripcion").innerHTML = localStorage.getItem("descripcion");
+
+ 
 
 
-
-  document.getElementById("nombreinput").placeholder = usuario;
-;
-
-
-
-
-
-
-
-
-
-  const cargarFotoPerfil = document.getElementById("cargarFotoPerfil");
-
-cargarFotoPerfil.addEventListener("change", async (e) => {
-  const file = e.target.files[0];
-  if (file) {
-    // Subir la imagen a Firebase Storage
-    try {
-      const storageRef = firebase.storage().ref();
-      const imageRef = storageRef.child(`fotosPerfil/${usuario}/${file.name}`);
-      await imageRef.put(file);
-
-      // Obtener la URL de descarga de la imagen
-      const imagenURL = await imageRef.getDownloadURL();
-
-      // Almacenar la URL en la base de datos Firestore
-      const usuariosRef = db.collection('Usuario');
-      await usuariosRef.doc(usuario).update({
-        fotoDePerfil: imagenURL
-      });
-
-      // Actualizar la imagen en la página
-      const fotoPerfil = document.getElementById("fotoPerfil");
-      fotoPerfil.style.backgroundImage = `url(${imagenURL})`;
-      fotoPerfil2.style.backgroundImage = `url(${imagenURL})`;
-      fotoPerfil3.style.backgroundImage = `url(${imagenURL})`;
-    } catch (error) {
-      console.error('Error al cargar la imagen:', error);
+  const usuariosRef = db.collection('Usuario');
+  usuariosRef.where('usuario', '==', usuarioBuscado)
+  .get()
+  .then((querySnapshot) => {
+    if (querySnapshot.size > 0) {
+      const userData = querySnapshot.docs[0].data();
+      // Obtén los datos del usuario buscado
+      const seguidoresBuscado = userData.seguidores;
+      localStorage.setItem("seguidoresBuscado", JSON.stringify(seguidoresBuscado));
+      const seguidosBuscado = userData.seguidos;
+      localStorage.setItem("seguidosBuscado", JSON.stringify(seguidosBuscado));
+      const fotoPerfilBuscado = userData.fotoDePerfil;
+      localStorage.setItem("fotoDePerfilBuscado", JSON.stringify(fotoPerfilBuscado));
+      const descripcionBuscado = userData.descripcion;
+      localStorage.setItem("descripcionBuscado", JSON.stringify(descripcionBuscado));
+    } else {
+      console.log("Usuario no encontrado en la base de datos");
     }
-  }
-});
-  function borrarDatos() {
+  })
+  .catch((error) => {
+    console.error('Error al consultar la base de datos:', error);
+  });
+
+
+
+
+
+
+
+
+ function borrarDatos() {
     localStorage.clear();
   }
 
 
 
-  function actualizarPerfil() {
-
-
-
-  const nombreActualizado = document.getElementById("nombreinput").value;
-  const mailActualizado = document.getElementById("mailinput").value;
-  const descActualizado = document.getElementById("descinput").value;
-
-  var usuario = localStorage.getItem("nombreUsuario");
-  if (descActualizado.length < 30) {
-    if (nombreActualizado || mailActualizado || descActualizado) {
-    // Crea un objeto con los campos que se desean actualizar
-    const camposActualizados = {};
-
-    if (nombreActualizado) {
-      camposActualizados.nombre = nombreActualizado;
-      localStorage.setItem("nombre", nombreActualizado); 
-    }
-
-    if (mailActualizado) {
-      camposActualizados.mail = mailActualizado;
-      localStorage.setItem("mail", mailActualizado); 
-    }
-
-    if (descActualizado) {
-      camposActualizados.descripcion = descActualizado;
-      localStorage.setItem("descripcion", descActualizado); 
-    }
-
-    const usuarioRef = db.collection("Usuario").doc(usuario);
-    usuarioRef.update(camposActualizados)
-  .then(() => {
-    console.log("Perfil actualizado exitosamente");
-
-    // Actualizar los elementos en la página con los datos actualizados del Local Storage
-    document.getElementById("nombreUsuario").innerHTML = "@"+ localStorage.getItem("nombreUsuario");
-    document.getElementById("mailinput").placeholder = localStorage.getItem("mail");
-    document.getElementById("descinput").placeholder = localStorage.getItem("descripcion");
-
-    // Limpiar los campos de entrada
-    document.getElementById("nombreinput").value = "";
-    document.getElementById("mailinput").value = "";
-    document.getElementById("descinput").value = "";
-  })
-  .catch((error) => {
-    console.error("Error al actualizar el perfil:", error);
-  });
-
-  } else {
-  }
-    } else{
-      console.log(descActualizado.length);
-    }
   
-}
-
 
  
 const usuarioRef = db.collection('Usuario').doc(usuario);
@@ -471,20 +344,14 @@ usuarioRef.onSnapshot((doc) => {
 
     
     document.getElementById("nombreUsuario").innerHTML = "@"+ usuario;
-  document.getElementById("nombre").innerHTML = localStorage.getItem("nombre");
+  document.getElementById("nombre").innerHTML = usuarioBuscado;
   document.getElementById("seguidores").innerHTML = "Seguidores: " + seguidores;
   document.getElementById("seguidos").innerHTML = "Seguidos: " + seguidos;
-  document.getElementById("seguidos2").innerHTML = seguidos;
-  document.getElementById("seguidores2").innerHTML = seguidores;
+  document.getElementById("seguidos2").innerHTML = localStorage.getItem("seguidosBuscado");
+  document.getElementById("seguidores2").innerHTML = localStorage.getItem("seguidoresBuscado");
   document.getElementById("fotoPerfil").style.backgroundImage = `url(${fotoPerfil})`;
-  document.getElementById("fotoPerfil2").style.backgroundImage = `url(${fotoPerfil})`;
-  document.getElementById("fotoPerfil3").style.backgroundImage = `url(${fotoPerfil})`;
-  document.getElementById("mailinput").placeholder = localStorage.getItem("mail");
-  document.getElementById("descinput").placeholder = localStorage.getItem("descripcion");
-  document.getElementById("descripcion").innerHTML = localStorage.getItem("descripcion");
-  document.getElementById("mailinput").placeholder = localStorage.getItem("mail");
-  document.getElementById("descinput").placeholder = localStorage.getItem("descripcion");
-  document.getElementById("nombreinput").placeholder = localStorage.getItem("nombre");  
+  document.getElementById("fotoPerfil2").style.backgroundImage = `url(${localStorage.getItem("fotoDePerfilBuscado")})`;
+  document.getElementById("descripcion").innerHTML = localStorage.getItem("descripcionBuscado");
 } else {
     console.log("Documento no encontrado en la base de datos");
   }

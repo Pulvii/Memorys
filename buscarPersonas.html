@@ -14,7 +14,7 @@
     <header class="navbar" >
         <div>
             <div class="left">
-                <h1 id="titulo">MEMORIES</h1>
+                <h1 id="titulo"> MEMORIES</h1>
             </div>
             <div class="right">
                 <i class="fas fa-bars" id="menu-toggle"></i>
@@ -42,60 +42,17 @@
     </div>
     
     <br>
+    <div class="search-container">
+        <input type="text" id="search-input" placeholder="Buscar usuarios">
+        <button id="search-button">Buscar</button>
+    </div>
 
-
-<center><button id="uploadButton" class="custom-btn btn-2">Subir Memoria </button></center>
-    <br>
-    <form id="uploadForm" class="hidden">
-        <h2>Subir Memoria</h2>
-
-
-        <div id="mediaContainer">
-            <div id="videoContainer"></div>
-            <div id="capturedImageContainer">
-                <canvas id="photoCanvas" style="display: none;"></canvas>
-                <img id="capturedImage" src="" alt="Captured Image" style="display: none;">
-            </div>
-        </div>
-        <center><div style="border: 2px solid black; border-radius: 50%; display: inline-block;" id="sacarFoto">
-            <button id="capturePhoto" type="button" style="border: transparent; background: none; padding: 0; border-radius: 50%;"><img src="camara.png" style="max-width: 100%; max-height: 100%; width: 50px; height: 50px; object-fit: cover; border-radius: 50%;"></button>   
-        </div></center>
-        <center><h3 id="errorCamara" style="color: red; display: none;">CAMARA NO ENCONTRADA</h3></center>
-        <br><br>
-        <center>
-            <div id="mic-container" style="border: 2px solid blue; border-radius: 50%; display: inline-block;">
-                <button type="button" onclick="runSpeechRecog()" style="border: transparent; background: none; padding: 0; border-radius: 50%;">
-                    <img id="mic-icon" src="pngegg.png" alt="" style="max-width: 100%; max-height: 100%; width: 50px; height: 50px; object-fit: cover; border-radius: 50%;">
-                </button>
-            </div>
-        </center>
-        
-        <div  id="soundBar" class="sound-bars">
-            <div class="sound-bar"></div>
-            <div class="sound-bar"></div>
-            <div class="sound-bar"></div>
-            <div class="sound-bar"></div>
-            <div class="sound-bar"></div>
-            <div class="sound-bar"></div>
-        </div>
-         <h3 id="output" id="nota" class="hide"></h3>
-        <button type="submit">Subir</button>
-        <button id="closeForm" type="button">Cerrar</button>
-    </form>
-
-    <section id="feed">
-
-        </div>
-        <!-- Aquí se muestran las memorias de los usuarios que sigues -->
-    </section>
-
-
-    <img id="imagenMostrada" src="imagenoencontrada.jpg" alt="Imagen Capturada" hidden>
-    <footer>
-        <p>&copy; 2023 Memorys</p>
-    </footer>
-
-
+    <!-- Lista de resultados de usuarios -->
+     <ul id="user-list">
+        <!-- Los resultados de búsqueda se mostrarán aquí -->
+    </ul>
+  <center>  <p style="color: red; display:none;" id="notFound" >Usuario no encontrado</p></center>
+    
 
 <script>
     const firebaseConfig = {
@@ -112,6 +69,70 @@
   const db = firebase.firestore();
   
   var usuario = localStorage.getItem("nombreUsuario");
+
+    // Función para realizar la búsqueda de usuarios
+    function searchUsers() {
+    const searchTerm = document.getElementById("search-input").value;
+
+
+    if (searchTerm) {
+        const usuariosRef = db.collection('Usuario');
+        usuariosRef.where('usuario', '>=', searchTerm)
+            .where('usuario', '<=', searchTerm + '\uf8ff')
+            .get()
+            .then((querySnapshot) => {
+                const userList = document.getElementById("user-list");
+                userList.innerHTML = ""; // Borra los resultados anteriores
+
+                if (querySnapshot.empty) {
+                    // Si no se encontraron resultados, muestra el mensaje "No se encontraron usuarios"
+                    document.getElementById("notFound").style.display = "block";
+                } else {
+                    document.getElementById("notFound").style.display = "none";
+                    querySnapshot.forEach((doc) => {
+                        const userData = doc.data();
+                        const username = userData.usuario;
+                        const photoURL = userData.fotoDePerfil;
+                        const userDiv = document.createElement("div"); 
+                        userDiv.classList.add("user-div"); 
+                        userDiv.innerHTML = `
+                        <img src="${photoURL}" alt="Foto de perfil">
+                        <span>${username}</span> 
+                        `;
+                        userList.appendChild(userDiv);
+                        userDiv.addEventListener("click", () => {
+                            window.location.href = `usuarioBuscado.html?username=${username}`;                        });
+                    });
+                }
+            })
+            .catch((error) => {
+                console.error('Error al consultar la base de datos:', error);
+            });
+    } else {
+        // Si no se ingresó un término de búsqueda, muestra el mensaje "No se encontraron usuarios"
+        document.getElementById("notFound").style.display = "block";
+    }
+}
+
+    document.getElementById("search-button").addEventListener("click", searchUsers);
+
+    const userList = document.getElementById("user-list");
+
+// Agrega un evento de clic a la lista de usuarios
+userList.addEventListener("click", (event) => {
+    const target = event.target;
+    
+    // Verifica si el clic ocurrió en un elemento de la lista
+    if (target.tagName === "LI") {
+        const username = target.querySelector("span").textContent;
+
+        // Redirige a la página del usuario
+        window.location.href = `usuario+${username}.html`;
+    }
+});
+
+
+
 
   if (usuario) {
     // Realiza una consulta para obtener los seguidores y seguidos del usuario
@@ -198,6 +219,88 @@
   }
 });
 </script>
+
+
+<style>
+    /* Estilos generales */
+    .search-container {
+        text-align: center;
+    }
+
+    #search-input {
+        width: 70%;
+        padding: 10px;
+        margin: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    #search-button {
+        background-color: #007BFF;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    #search-button:hover {
+        background-color: #0056b3;
+    }
+
+    #user-list {
+        list-style: none;
+        padding: 0;
+    }
+
+    #user-list li {
+        display: flex;
+        align-items: center;
+        margin: 10px;
+    }
+
+    #user-list img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        margin-right: 10px;
+    }
+
+    #user-list span {
+        font-weight: bold;
+    }
+
+    /* Estilos para hacer el div de usuario clickeable */
+.user-div {
+    cursor: pointer; /* Cambia el cursor al puntero al pasar sobre el usuario */
+    padding: 10px; /* Añade espacio alrededor del usuario */
+    border: 1px solid #ccc; /* Agrega un borde alrededor del usuario */
+    border-radius: 5px; /* Borde redondeado */
+    display: flex; /* Alinea elementos horizontalmente */
+    align-items: center; /* Centra verticalmente */
+}
+
+.user-div:hover {
+    background-color: #f0f0f0; /* Cambia el color de fondo al pasar sobre el usuario */
+}
+
+/* Estilos específicos para la imagen del usuario */
+.user-div img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+/* Estilos específicos para el nombre de usuario */
+.user-div span {
+    font-weight: bold;
+}
+
+
+
+
+</style>
 
 <script src="navbar.js"></script>
 </body>
