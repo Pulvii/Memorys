@@ -7,14 +7,14 @@
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-storage.js"></script>
 
     <script src="script.js" defer></script>
-    <title>MEMORIES</title>
+    <title>Memories</title>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     </head>
 <body>
     <header class="navbar" >
         <div>
             <div class="left">
-                <h1 id="titulo">MEMORYS</h1>
+                <h1 id="titulo">MEMORIES</h1>
             </div>
             <div class="right">
                 <i class="fas fa-bars" id="menu-toggle"></i>
@@ -157,15 +157,17 @@
 
   const usuarioRef = db.collection('Usuario').doc(usuario);
 
-usuarioRef.onSnapshot((doc) => {
+  usuarioRef.onSnapshot((doc) => {
   if (doc.exists) {
     const userData = doc.data();
+
     const seguidores = userData.seguidores;
     const seguidos = userData.seguidos;
     const mail = userData.mail;
     const descripcion = userData.descripcion;
     const nombre = userData.nombre;
     const usuario = userData.usuario;
+    const fotoPerfil = userData.fotoDePerfil;
 
           // Almacena los datos en el LocalStorage
     localStorage.setItem("seguidores", JSON.stringify(seguidores));
@@ -174,6 +176,9 @@ usuarioRef.onSnapshot((doc) => {
     localStorage.setItem("descripcion", descripcion);
     localStorage.setItem("nombre", nombre);
     localStorage.setItem("usuario", usuario);
+    localStorage.setItem("usuario", usuario);
+    localStorage.setItem("fotoDePerfil", fotoPerfil);
+
     
     document.getElementById("nombreUsuario").innerHTML = "@"+ usuario;
   document.getElementById("nombre").innerHTML = localStorage.getItem("nombre");
@@ -181,20 +186,19 @@ usuarioRef.onSnapshot((doc) => {
   document.getElementById("seguidos").innerHTML = "Seguidos: " + seguidos;
   document.getElementById("seguidos2").innerHTML = seguidos;
   document.getElementById("seguidores2").innerHTML = seguidores;
-  document.getElementById("fotoPerfil").style.backgroundImage = `url(${fotoPerf})`;
-  document.getElementById("fotoPerfil2").style.backgroundImage = `url(${fotoPerf})`;
-  document.getElementById("fotoPerfil3").style.backgroundImage = `url(${fotoPerf})`;
+  document.getElementById("fotoPerfil").style.backgroundImage = `url(${fotoPerfil})`;
+  document.getElementById("fotoPerfil2").style.backgroundImage = `url(${fotoPerfil})`;
+  document.getElementById("fotoPerfil3").style.backgroundImage = `url(${fotoPerfil})`;
   document.getElementById("mailinput").placeholder = localStorage.getItem("mail");
   document.getElementById("descinput").placeholder = localStorage.getItem("descripcion");
   document.getElementById("descripcion").innerHTML = localStorage.getItem("descripcion");
   document.getElementById("mailinput").placeholder = localStorage.getItem("mail");
   document.getElementById("descinput").placeholder = localStorage.getItem("descripcion");
   document.getElementById("nombreinput").placeholder = localStorage.getItem("nombre");  
-  } else {
+} else {
     console.log("Documento no encontrado en la base de datos");
   }
 });
-
 </script>
 
 <script src="navbar.js"></script>

@@ -3,7 +3,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tiktok Profile Page</title>
+    <title>Memories - Perfil</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
@@ -16,7 +16,7 @@
     <header class="navbar" >
         <div>
             <div class="left">
-                <p id="titulo">MEMORIES</p>
+                <p  id="titulo"><a href="index.html">MEMORIES</a> </p>
             </div>
             <div class="right">
                 <i class="fas fa-bars" id="menu-toggle"></i>
@@ -327,7 +327,6 @@ label {
 
 
   document.getElementById("nombreUsuario").innerHTML = usuario;
-  document.getElementById("nombre").innerHTML = usuario;
   document.getElementById("seguidores").innerHTML = "Seguidores: " + seguidores;
   document.getElementById("seguidos").innerHTML = "Seguidos: " + seguidos;
   document.getElementById("seguidos2").innerHTML = seguidos;
@@ -458,6 +457,7 @@ usuarioRef.onSnapshot((doc) => {
     const descripcion = userData.descripcion;
     const nombre = userData.nombre;
     const usuario = userData.usuario;
+    const fotoPerfil = userData.fotoDePerfil;
 
           // Almacena los datos en el LocalStorage
     localStorage.setItem("seguidores", JSON.stringify(seguidores));
@@ -466,6 +466,9 @@ usuarioRef.onSnapshot((doc) => {
     localStorage.setItem("descripcion", descripcion);
     localStorage.setItem("nombre", nombre);
     localStorage.setItem("usuario", usuario);
+    localStorage.setItem("usuario", usuario);
+    localStorage.setItem("fotoDePerfil", fotoPerfil);
+
     
     document.getElementById("nombreUsuario").innerHTML = "@"+ usuario;
   document.getElementById("nombre").innerHTML = localStorage.getItem("nombre");
@@ -473,9 +476,9 @@ usuarioRef.onSnapshot((doc) => {
   document.getElementById("seguidos").innerHTML = "Seguidos: " + seguidos;
   document.getElementById("seguidos2").innerHTML = seguidos;
   document.getElementById("seguidores2").innerHTML = seguidores;
-  document.getElementById("fotoPerfil").style.backgroundImage = `url(${fotoPerf})`;
-  document.getElementById("fotoPerfil2").style.backgroundImage = `url(${fotoPerf})`;
-  document.getElementById("fotoPerfil3").style.backgroundImage = `url(${fotoPerf})`;
+  document.getElementById("fotoPerfil").style.backgroundImage = `url(${fotoPerfil})`;
+  document.getElementById("fotoPerfil2").style.backgroundImage = `url(${fotoPerfil})`;
+  document.getElementById("fotoPerfil3").style.backgroundImage = `url(${fotoPerfil})`;
   document.getElementById("mailinput").placeholder = localStorage.getItem("mail");
   document.getElementById("descinput").placeholder = localStorage.getItem("descripcion");
   document.getElementById("descripcion").innerHTML = localStorage.getItem("descripcion");
