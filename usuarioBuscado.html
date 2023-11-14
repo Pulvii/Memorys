@@ -360,6 +360,46 @@ usuarioRef.onSnapshot((doc) => {
 
 
 
+
+// Obtén una referencia al documento del usuario actual en Firebase
+const usuarioRefs = db.collection('Usuario').doc(usuarioBuscado);
+
+// Obtén el elemento del content grid donde se mostrarán las imágenes
+const contentGrid = document.querySelector('.grid.grid-cols-3');
+
+// Limpiar el contenido actual del content grid
+contentGrid.innerHTML = '';
+
+// Obtén las publicaciones del usuario actual en Firebase
+usuarioRefs.get().then((doc) => {
+  if (doc.exists) {
+    // Verifica si el documento tiene un array directo con el campo linkFoto
+    const publicaciones = doc.data().Publicaciones;
+    if (publicaciones && Array.isArray(publicaciones)) {
+      publicaciones.forEach((contenidoMap) => {
+        // Verificar si el objeto tiene un campo llamado linkFoto
+        if (contenidoMap.linkFoto) {
+          const cardDiv = document.createElement('div');
+          cardDiv.classList.add('card');
+
+          const imgElement = document.createElement('img');
+          imgElement.src = contenidoMap.linkFoto;
+          imgElement.classList.add('card-img-top', 'img-fixed-size');
+          imgElement.alt = 'Publicación';
+
+          // Agregar la imagen al div y el div al content grid
+          cardDiv.appendChild(imgElement);
+          contentGrid.appendChild(cardDiv);
+        }
+      });
+    }
+  } else {
+    console.error('El documento del usuario no existe');
+  }
+}).catch((error) => {
+  console.error('Error al obtener las publicaciones de Firebase:', error);
+});
+
 </script>
 
 <script src="navbar.js"></script>

@@ -28,9 +28,10 @@ async function datosEnviados() {
 
   window.crypto.subtle.digest("SHA-256", data)
     .then(hashBuffer => {
+      
       const hashArray = Array.from(new Uint8Array(hashBuffer));
       const hashHex = hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
-
+      
       const docData = {
         nombre: nombre,
         usuario: usuario,
@@ -39,7 +40,8 @@ async function datosEnviados() {
         seguidos: 0,
         seguidores: 0,
         provicional: contrasenia,
-        descripcion: ""
+        descripcion: " ",
+        fotoDePerfil: "https://firebasestorage.googleapis.com/v0/b/memorys-c7164.appspot.com/o/fotosPerfil%2Fimagenoencontrada.jpg?alt=media&token=2b2ef2cd-b8bb-405a-af6d-38fcfef9de87"
       };
 
       const usuariosRef = db.collection('Usuario');

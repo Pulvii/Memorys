@@ -63,27 +63,38 @@ const memorias = [
 
 
 
-// Función para crear y agregar una memoria al feed
 function agregarMemoriaAlFeed(memoria) {
     uploadForm.classList.add("hidden");
     const usuario = usuarios.find(u => u.usuario === memoria.usuarioId);
     const memoriaElement = document.createElement("div");
     memoriaElement.classList.add("memoria", "flip-container");
-    memoriaElement.innerHTML = `
-        <div class="flipper">
-            <div class="back">
-                <img src="${usuario.fotoPerfil}" alt="${usuario.nombre}" class="profile-pic">
-                <p style="font-size: x-large;font-weight: bold;">${usuario.nombre}</p>
-                <p>${memoria.nota}</p>
-            </div>
-            <div class="front">
-                <img src="${memoria.contenido}" alt="${memoria.nota}" class="front-img">
-            </div>
+
+    const flipperElement = document.createElement("div");
+    flipperElement.classList.add("flipper");
+
+    flipperElement.innerHTML = `
+        <div class="back">
+            <img src="${usuario.fotoPerfil}" alt="${usuario.nombre}" class="profile-pic">
+            <p style="font-size: x-large;font-weight: bold;">${usuario.nombre}</p>
+            <p>${memoria.nota}</p>
+        </div>
+        <div class="front">
+            <img src="${memoria.contenido}" alt="${memoria.nota}" class="front-img">
         </div>
     `;
+
+    // Agregar el evento onclick al div de la memoria
+    memoriaElement.onclick = function() {
+        toggleFlip(this);
+    };
+
+    memoriaElement.appendChild(flipperElement);
+
     const feed = document.getElementById("feed");
     feed.appendChild(memoriaElement);
 }
+
+
 
 // Cargar memorias en el feed inicialmente
 const feed = document.getElementById("feed");
@@ -210,6 +221,13 @@ uploadForm.addEventListener("submit", async (e) => {
         contenido = capturedImage.src; // Usar la imagen capturada como contenido
     } else {
         contenido = document.getElementById('imagenMostrada').src;
+        alert("NO SE PUEDE SUBIR SIN FOTO");
+            // Ocultar el formulario y detener la cámara
+    uploadForm.classList.add("hidden");
+    capturedImage.style.display = "none";
+    photoCanvas.style.display = "none";
+    stopCamera(); // Detener la cámara cuando cierras el formulario
+        return;
     }
     if (mensajeEscrito) {
         nota = transcript0;
