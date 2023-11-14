@@ -1,5 +1,7 @@
-
-
+window.addEventListener('load', function() {
+    this.document.getElementById("load").style.display = "block";
+    this.document.getElementById("todo").style.display = "none";
+});
 
   function borrarDatos() {
     localStorage.clear();
@@ -64,6 +66,7 @@ const memorias = [
 
 
 function agregarMemoriaAlFeed(memoria) {
+
     uploadForm.classList.add("hidden");
     const usuario = usuarios.find(u => u.usuario === memoria.usuarioId);
     const memoriaElement = document.createElement("div");
@@ -92,6 +95,8 @@ function agregarMemoriaAlFeed(memoria) {
 
     const feed = document.getElementById("feed");
     feed.appendChild(memoriaElement);
+    document.getElementById("todo").style.display = "block"
+    document.getElementById("load").style.display = "none"
 }
 
 

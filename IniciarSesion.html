@@ -22,6 +22,7 @@
     </div>
 </header>
   <br><br><br>
+  <div id="todo">
     <center>
     <form class="form card">
         <div class="card_header">
@@ -49,7 +50,10 @@
 
       </form>    
     </center>
-
+  </div>
+  <div id="load" class="load" style="display: none;">
+    <hr/><hr/><hr/><hr/>
+  </div>
       <style>.card {
         width: 190px;
         height: 304px;
@@ -257,6 +261,26 @@ ul.nav-list a {
   }
 }
 
+
+
+.load{position:absolute;top:50%;left:50%;transform:translate(-50%, -50%);
+  /*change these sizes to fit into your project*/
+  width:100px;
+  height:100px;
+}
+.load hr{border:0;margin:0;width:40%;height:40%;position:absolute;border-radius:50%;animation:spin 2s ease infinite}
+
+.load :first-child{background:#B695C0;animation-delay:-1.5s}
+.load :nth-child(2){background:#B57EDC;animation-delay:-1s}
+.load :nth-child(3){background:#9966CC;animation-delay:-0.5s}
+.load :last-child{background:#9065CA}
+
+@keyframes spin{
+  0%,100%{transform:translate(0)}
+  25%{transform:translate(160%)}
+  50%{transform:translate(160%, 160%)}
+  75%{transform:translate(0, 160%)}
+}
       </style>
 
 

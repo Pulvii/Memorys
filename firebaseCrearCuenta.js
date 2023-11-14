@@ -12,6 +12,8 @@ const app = firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
 async function datosEnviados() {
+  document.getElementById("load").style.display= "block";
+  document.getElementById("todo").style.display= "none";
   var nombre = document.getElementById("nombre").value;
   var usuario = document.getElementById("username").value;
   var mail = document.getElementById("mail").value;
@@ -52,6 +54,8 @@ async function datosEnviados() {
           if (querySnapshot.size > 0) {
             console.log("El correo ya existe en la base de datos");
             document.getElementById("mailError").style.display = "block";
+            document.getElementById("load").style.display= "none";
+            document.getElementById("todo").style.display= "block";
           } else {
             usuariosRef.where('usuario', '==', usuario)
               .get()
@@ -60,6 +64,8 @@ async function datosEnviados() {
                   console.log("El usuario ya existe en la base de datos");
                   document.getElementById("mailError").style.display = "none";
                   document.getElementById("userError").style.display = "block";
+                  document.getElementById("load").style.display= "none";
+                  document.getElementById("todo").style.display= "block";
                 } else {
                   db.collection("Usuario").doc(usuario).set(docData)
                     .then(() => {

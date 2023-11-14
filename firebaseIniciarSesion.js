@@ -12,6 +12,8 @@ const firebaseConfig = {
   const db = firebase.firestore();
   
   async function datosEnviados() {
+    document.getElementById("load").style.display= "block";
+    document.getElementById("todo").style.display= "none";
     var usuario = document.getElementById("username").value;
     var contrasenia = document.getElementById("contrasenia").value;
   
@@ -32,6 +34,8 @@ const firebaseConfig = {
             if (!(querySnapshot.size > 0)) {
               console.log("El usuario no existe");
               document.getElementById("userError").style.display = "block";
+              document.getElementById("todo").style.display= "block";
+              document.getElementById("load").style.display= "none";
             } else {
               usuariosRef.where('contrasenia', '==', hashHex)
                 .get()
@@ -40,6 +44,8 @@ const firebaseConfig = {
                     console.log("Contraseña incorrecta");
                     document.getElementById("contraError").style.display = "block";
                     document.getElementById("userError").style.display = "none";
+                    document.getElementById("todo").style.display= "block";
+                    document.getElementById("load").style.display= "none";
                   } else {
                     console.log("entro");
                     document.getElementById("userError").style.display = "none";
