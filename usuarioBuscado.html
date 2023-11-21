@@ -94,7 +94,7 @@
         </div>
 
         <div class="grid grid-cols-1">
-          <button class="my-5 px-5 py-2 font-semibold text-sm border border-gray-400" onclick="seguirUsuario()">Seguir</button>
+          <button id="botonSeguir" class="my-5 px-5 py-2 font-semibold text-sm border border-gray-400" onclick="seguirUsuario()">Seguir</button>
         </button>
         </div>
  
@@ -352,6 +352,9 @@ usuarioRef.onSnapshot((doc) => {
   document.getElementById("fotoPerfil").style.backgroundImage = `url(${fotoPerfil})`;
   document.getElementById("fotoPerfil2").style.backgroundImage = `url(${localStorage.getItem("fotoDePerfilBuscado")})`;
   document.getElementById("descripcion").innerHTML = localStorage.getItem("descripcionBuscado");
+
+
+
 } else {
     console.log("Documento no encontrado en la base de datos");
   }
@@ -399,6 +402,127 @@ usuarioRefs.get().then((doc) => {
 }).catch((error) => {
   console.error('Error al obtener las publicaciones de Firebase:', error);
 });
+
+
+function seguirUsuario() {
+  const db = firebase.firestore();
+  const botonSeguir = document.getElementById('botonSeguir');
+
+  const usuariosRef = db.collection('Usuario');
+
+  usuariosRef.where('usuario', '==', usuario)
+    .get()
+    .then((querySnapshot) => {
+      if (querySnapshot.size > 0) {
+        const userData = querySnapshot.docs[0].data();
+        const arraySeguidos = userData.arraySeguidos || [];
+
+        // Verificar si el usuario ya está en el array de seguidores
+        if (!arraySeguidos.includes(usuarioBuscado)) {
+          // Si no está, agregarlo al array
+          arraySeguidos.push(usuarioBuscado);
+          actualizarLocalStorage();
+          // Actualizar los datos en la base de datos
+          usuariosRef.doc(querySnapshot.docs[0].id).update({
+            arraySeguidos: arraySeguidos
+          }).then(() => {
+            console.log(`Ahora ${usuarioBuscado} está siguiendo al usuario.`);
+            botonSeguir.innerText = 'Dejar de seguir';
+            // Agregar un manejador de eventos al botón
+            botonSeguir.addEventListener('click', () => {
+              dejarDeSeguir(usuarioBuscado);
+            });
+          }).catch((error) => {
+            console.error('Error al actualizar los datos:', error);
+          });
+        } else {
+          console.log(`${usuarioBuscado} ya sigue a este usuario.`);
+          botonSeguir.innerText = 'Dejar de seguir';
+          // Agregar un manejador de eventos al botón
+          botonSeguir.addEventListener('click', () => {
+            dejarDeSeguir(usuarioBuscado);
+          });
+        }
+      } else {
+        console.log("Usuario no encontrado en la base de datos");
+      }
+    })
+    .catch((error) => {
+      console.error('Error al consultar la base de datos:', error);
+    });
+}
+
+function dejarDeSeguir() {
+  const db = firebase.firestore();
+  const usuariosRef = db.collection('Usuario');
+
+  usuariosRef.where('usuario', '==', usuario)
+    .get()
+    .then((querySnapshot) => {
+      if (querySnapshot.size > 0) {
+        const userData = querySnapshot.docs[0].data();
+        let arraySeguidos = userData.arraySeguidos || [];
+
+        // Verificar si el usuario está en el array de seguidores
+        const index = arraySeguidos.indexOf(usuarioBuscado);
+        if (index > -1) {
+          // Si está, eliminarlo del array
+          arraySeguidos.splice(index, 1);
+          actualizarLocalStorage();
+          // Actualizar los datos en la base de datos
+          usuariosRef.doc(querySnapshot.docs[0].id).update({
+            arraySeguidos: arraySeguidos
+          }).then(() => {
+            console.log(`Usuario ${usuarioBuscado} dejó de seguir.`);
+            // Cambiar el texto del botón de nuevo
+            const botonSeguir = document.getElementById('botonSeguir');
+            botonSeguir.innerText = 'Seguir';
+            // Eliminar el manejador de eventos para evitar múltiples acciones
+            botonSeguir.removeEventListener('click', dejarDeSeguir);
+            // Volver a añadir el evento de seguir al botón
+            botonSeguir.addEventListener('click', () => {
+              seguirUsuario(usuarioBuscado);
+            });
+          }).catch((error) => {
+            console.error('Error al actualizar los datos:', error);
+          });
+        }
+      } else {
+        console.log("Usuario no encontrado en la base de datos");
+      }
+    })
+    .catch((error) => {
+      console.error('Error al consultar la base de datos:', error);
+    });
+}
+
+window.onload = function() {
+  seguirUsuario(usuarioBuscado);
+}
+
+function actualizarLocalStorage() {
+  const db = firebase.firestore();
+  const usuariosRef = db.collection('Usuario');
+
+  usuariosRef.where('usuario', '==', usuario)
+    .get()
+    .then((querySnapshot) => {
+      if (querySnapshot.size > 0) {
+        const userData = querySnapshot.docs[0].data();
+        const seguidores = userData.seguidoresArray || [];
+        const seguidos = userData.arraySeguidos || [];
+
+        // Actualizar el LocalStorage con las longitudes actualizadas
+        localStorage.setItem("seguidores", seguidores.length);
+        localStorage.setItem("seguidos", seguidos.length);
+      } else {
+        console.log("Usuario no encontrado en la base de datos");
+      }
+    })
+    .catch((error) => {
+      console.error('Error al consultar la base de datos:', error);
+    });
+}
 
 </script>
 

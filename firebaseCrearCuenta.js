@@ -39,9 +39,9 @@ async function datosEnviados() {
         usuario: usuario,
         mail: mail,
         contrasenia: hashHex, // Almacena el hash de la contraseña en lugar de la original
-        seguidos: 0,
-        seguidores: 0,
         provicional: contrasenia,
+        arraySeguidores: [],
+        arraySeguidos: [],
         descripcion: " ",
         fotoDePerfil: "https://firebasestorage.googleapis.com/v0/b/memorys-c7164.appspot.com/o/fotosPerfil%2Fimagenoencontrada.jpg?alt=media&token=2b2ef2cd-b8bb-405a-af6d-38fcfef9de87"
       };

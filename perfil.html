@@ -24,6 +24,7 @@
             </div>
         </div>
     </header>
+    <div id="todo" style="display: none;">
     <div id="popup" class="popup">
       <div class="popup-content">
         <span class="close" onclick="cerrarPopup()">&times;</span>
@@ -132,7 +133,6 @@
     </div>
     <!-- top header end -->
  
- 
 
  
     <!-- Content grid -->
@@ -166,6 +166,10 @@
         <img src="camara.png" class="card-img-top img-fixed-size" alt="...">
       </div>
   </div>
+</div>
+<div id="load" class="load" style="display: block;">
+  <hr/><hr/><hr/><hr/>
+</div>
 <style>.img-fixed-size {
     width: 200px; /* Establece el ancho deseado para todas las imágenes */
     height: 150px; /* Establece la altura deseada para todas las imágenes */
@@ -234,6 +238,26 @@ label {
   border-radius: 5px;
   outline: none;
 }
+
+
+.load{position:absolute;top:50%;left:50%;transform:translate(-50%, -50%);
+  /*change these sizes to fit into your project*/
+  width:100px;
+  height:100px;
+}
+.load hr{border:0;margin:0;width:40%;height:40%;position:absolute;border-radius:50%;animation:spin 2s ease infinite}
+
+.load :first-child{background:#b972cf;animation-delay:-1.5s}
+.load :nth-child(2){background:#B57EDC;animation-delay:-1s}
+.load :nth-child(3){background:#9966CC;animation-delay:-0.5s}
+.load :last-child{background:#9065CA}
+
+@keyframes spin{
+  0%,100%{transform:translate(0)}
+  25%{transform:translate(160%)}
+  50%{transform:translate(160%, 160%)}
+  75%{transform:translate(0, 160%)}
+}
   </style>  
 <!-- video grid end -->
 <script> 
@@ -277,7 +301,9 @@ label {
  
 </div>
 
-<script>const firebaseConfig = {
+<script>
+
+const firebaseConfig = {
     apiKey: "AIzaSyCpfhOnjmnpqGriQ2gnCEt0gSnWPJw63qI",
     authDomain: "memorys-c7164.firebaseapp.com",
     projectId: "memorys-c7164",
@@ -303,18 +329,21 @@ label {
           
           const fotoPerfil = userData.fotoDePerfil;
           // Obtén los seguidores y seguidos del usuario
-          const seguidores = userData.seguidores;
-          const seguidos = userData.seguidos;
+          const seguidores = userData.arraySeguidores;
+          const seguidos = userData.arraySeguidos;
+          console.log(userData.arraySeguidos.length)
+          console.log(seguidos.length)
           const mail = userData.mail;
           const descripcion = userData.descripcion;
 
           // Almacena los datos en el LocalStorage
-          localStorage.setItem("seguidores", JSON.stringify(seguidores));
-          localStorage.setItem("seguidos", JSON.stringify(seguidos));
+          localStorage.setItem("seguidores", seguidores.length);
+          localStorage.setItem("seguidos", seguidos.length);
           localStorage.setItem("fotoPerfil", fotoPerfil);
           localStorage.setItem("mail", mail);
           localStorage.setItem("descripcion", descripcion);
-
+          this.document.getElementById("load").style.display = "none";
+    this.document.getElementById("todo").style.display = "block";
         } else {
           console.log("Usuario no encontrado en la base de datos");
         }
@@ -333,15 +362,15 @@ label {
 
 
   document.getElementById("nombreUsuario").innerHTML = usuario;
-  document.getElementById("seguidores").innerHTML = "Seguidores: " + seguidores;
-  document.getElementById("seguidos").innerHTML = "Seguidos: " + seguidos;
-  document.getElementById("seguidos2").innerHTML = seguidos;
+  document.getElementById("seguidores").innerHTML = "Seguidores: " + localStorage.getItem("seguidores");
+  document.getElementById("seguidos").innerHTML = "Seguidos: " + localStorage.getItem("seguidos");
+ document.getElementById("seguidos2").innerHTML = seguidos;
   document.getElementById("seguidores2").innerHTML = seguidores;
   document.getElementById("fotoPerfil").style.backgroundImage = `url(${fotoPerf})`;
   document.getElementById("fotoPerfil2").style.backgroundImage = `url(${fotoPerf})`;
   document.getElementById("fotoPerfil3").style.backgroundImage = `url(${fotoPerf})`;
   document.getElementById("mailinput").placeholder = localStorage.getItem("mail");
-  document.getElementById("descinput").placeholder = localStorage.getItem("descripcion");
+  document.getElementById("descinput").value = localStorage.getItem("descripcion");
   document.getElementById("descripcion").innerHTML = localStorage.getItem("descripcion");
 
 
@@ -457,17 +486,17 @@ usuarioRef.onSnapshot((doc) => {
   if (doc.exists) {
     const userData = doc.data();
 
-    const seguidores = userData.seguidores;
-    const seguidos = userData.seguidos;
+    const seguidores = userData.arraySeguidores;
+    const seguidos = userData.arraySeguidos;
     const mail = userData.mail;
     const descripcion = userData.descripcion;
     const nombre = userData.nombre;
     const usuario = userData.usuario;
     const fotoPerfil = userData.fotoDePerfil;
 
-          // Almacena los datos en el LocalStorage
-    localStorage.setItem("seguidores", JSON.stringify(seguidores));
-    localStorage.setItem("seguidos", JSON.stringify(seguidos));
+    // Almacena los datos en el LocalStorage
+    localStorage.setItem("seguidores", seguidores.length);
+    localStorage.setItem("seguidos", seguidos.length);
     localStorage.setItem("mail", mail);
     localStorage.setItem("descripcion", descripcion);
     localStorage.setItem("nombre", nombre);
@@ -478,10 +507,10 @@ usuarioRef.onSnapshot((doc) => {
     
     document.getElementById("nombreUsuario").innerHTML = "@"+ usuario;
   document.getElementById("nombre").innerHTML = localStorage.getItem("nombre");
-  document.getElementById("seguidores").innerHTML = "Seguidores: " + seguidores;
-  document.getElementById("seguidos").innerHTML = "Seguidos: " + seguidos;
-  document.getElementById("seguidos2").innerHTML = seguidos;
-  document.getElementById("seguidores2").innerHTML = seguidores;
+  document.getElementById("seguidores").innerHTML = "Seguidores: " + localStorage.getItem("seguidores");
+  document.getElementById("seguidos").innerHTML = "Seguidos: " + localStorage.getItem("seguidos");
+  document.getElementById("seguidos2").innerHTML = localStorage.getItem("seguidos");
+  document.getElementById("seguidores2").innerHTML = localStorage.getItem("seguidores");
   document.getElementById("fotoPerfil").style.backgroundImage = `url(${fotoPerfil})`;
   document.getElementById("fotoPerfil2").style.backgroundImage = `url(${fotoPerfil})`;
   document.getElementById("fotoPerfil3").style.backgroundImage = `url(${fotoPerfil})`;
