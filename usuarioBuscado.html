@@ -200,17 +200,6 @@ label {
 }
   </style>  
 <!-- video grid end -->
-
-  
-  
-  
-  
-  
-  
-  
-  
-  
-   
  
 </div>
 
@@ -240,14 +229,14 @@ label {
           
           const fotoPerfil = userData.fotoDePerfil;
           // Obtén los seguidores y seguidos del usuario
-          const seguidores = userData.seguidores;
-          const seguidos = userData.seguidos;
+          const seguidores = userData.arraySeguidores;
+          const seguidos = userData.arraySeguidos;
           const mail = userData.mail;
           const descripcion = userData.descripcion;
 
           // Almacena los datos en el LocalStorage
-          localStorage.setItem("seguidores", JSON.stringify(seguidores));
-          localStorage.setItem("seguidos", JSON.stringify(seguidos));
+          localStorage.setItem("seguidores", seguidores.length);
+          localStorage.setItem("seguidos", seguidos.length);
           localStorage.setItem("fotoPerfil", fotoPerfil);
           localStorage.setItem("mail", mail);
           localStorage.setItem("descripcion", descripcion);
@@ -279,28 +268,6 @@ label {
  
 
 
-  const usuariosRef = db.collection('Usuario');
-  usuariosRef.where('usuario', '==', usuarioBuscado)
-  .get()
-  .then((querySnapshot) => {
-    if (querySnapshot.size > 0) {
-      const userData = querySnapshot.docs[0].data();
-      // Obtén los datos del usuario buscado
-      const seguidoresBuscado = userData.seguidores;
-      localStorage.setItem("seguidoresBuscado", JSON.stringify(seguidoresBuscado));
-      const seguidosBuscado = userData.seguidos;
-      localStorage.setItem("seguidosBuscado", JSON.stringify(seguidosBuscado));
-      const fotoPerfilBuscado = userData.fotoDePerfil;
-      localStorage.setItem("fotoDePerfilBuscado", JSON.stringify(fotoPerfilBuscado));
-      const descripcionBuscado = userData.descripcion;
-      localStorage.setItem("descripcionBuscado", JSON.stringify(descripcionBuscado));
-    } else {
-      console.log("Usuario no encontrado en la base de datos");
-    }
-  })
-  .catch((error) => {
-    console.error('Error al consultar la base de datos:', error);
-  });
 
 
 
@@ -324,17 +291,17 @@ usuarioRef.onSnapshot((doc) => {
   if (doc.exists) {
     const userData = doc.data();
 
-    const seguidores = userData.seguidores;
-    const seguidos = userData.seguidos;
-    const mail = userData.mail;
+    const seguidores = userData.arraySeguidores;
+    const seguidos = userData.arraySeguidos;
+     const mail = userData.mail;
     const descripcion = userData.descripcion;
     const nombre = userData.nombre;
     const usuario = userData.usuario;
     const fotoPerfil = userData.fotoDePerfil;
 
           // Almacena los datos en el LocalStorage
-    localStorage.setItem("seguidores", JSON.stringify(seguidores));
-    localStorage.setItem("seguidos", JSON.stringify(seguidos));
+          localStorage.setItem("seguidores", seguidores.length);
+    localStorage.setItem("seguidos", seguidos.length);
     localStorage.setItem("mail", mail);
     localStorage.setItem("descripcion", descripcion);
     localStorage.setItem("nombre", nombre);
@@ -345,14 +312,46 @@ usuarioRef.onSnapshot((doc) => {
     
     document.getElementById("nombreUsuario").innerHTML = "@"+ usuario;
   document.getElementById("nombre").innerHTML = usuarioBuscado;
-  document.getElementById("seguidores").innerHTML = "Seguidores: " + seguidores;
-  document.getElementById("seguidos").innerHTML = "Seguidos: " + seguidos;
+  document.getElementById("seguidores").innerHTML = "Seguidores: " + localStorage.getItem("seguidores");
+  document.getElementById("seguidos").innerHTML = "Seguidos: " + localStorage.getItem("seguidos");
+  console.log("antes asignar" + localStorage.getItem("seguidosBuscado"));
   document.getElementById("seguidos2").innerHTML = localStorage.getItem("seguidosBuscado");
+  console.log("despues asignar" + localStorage.getItem("seguidosBuscado"));
+
   document.getElementById("seguidores2").innerHTML = localStorage.getItem("seguidoresBuscado");
   document.getElementById("fotoPerfil").style.backgroundImage = `url(${fotoPerfil})`;
   document.getElementById("fotoPerfil2").style.backgroundImage = `url(${localStorage.getItem("fotoDePerfilBuscado")})`;
   document.getElementById("descripcion").innerHTML = localStorage.getItem("descripcionBuscado");
 
+
+
+  const usuariosRef = db.collection('Usuario');
+  usuariosRef.where('usuario', '==', usuarioBuscado)
+  .get()
+  .then((querySnapshot) => {
+    if (querySnapshot.size > 0) {
+      const userData = querySnapshot.docs[0].data();
+      // Obtén los datos del usuario buscado
+      const seguidoresBuscado = userData.arraySeguidores;
+      localStorage.setItem("seguidoresBuscado", seguidoresBuscado.length);
+      document.getElementById("seguidore2").innerHTML = localStorage.getItem("seguidoresBuscado");
+      const seguidosBuscado = userData.arraySeguidos;
+      localStorage.setItem("seguidosBuscado",seguidosBuscado.length);
+      document.getElementById("seguidos2").innerHTML = localStorage.getItem("seguidosBuscado");
+
+      console.log(seguidosBuscado.length);
+
+      const fotoPerfilBuscado = userData.fotoDePerfil;
+      localStorage.setItem("fotoDePerfilBuscado", JSON.stringify(fotoPerfilBuscado));
+      const descripcionBuscado = userData.descripcion;
+      localStorage.setItem("descripcionBuscado", JSON.stringify(descripcionBuscado));
+    } else {
+      console.log("Usuario no encontrado en la base de datos");
+    }
+  })
+  .catch((error) => {
+    console.error('Error al consultar la base de datos:', error);
+  });
 
 
 } else {
@@ -409,7 +408,7 @@ function seguirUsuario() {
   const botonSeguir = document.getElementById('botonSeguir');
 
   const usuariosRef = db.collection('Usuario');
-
+  
   usuariosRef.where('usuario', '==', usuario)
     .get()
     .then((querySnapshot) => {
@@ -425,30 +424,55 @@ function seguirUsuario() {
           // Actualizar los datos en la base de datos
           usuariosRef.doc(querySnapshot.docs[0].id).update({
             arraySeguidos: arraySeguidos
+            
           }).then(() => {
             console.log(`Ahora ${usuarioBuscado} está siguiendo al usuario.`);
-            botonSeguir.innerText = 'Dejar de seguir';
-            // Agregar un manejador de eventos al botón
-            botonSeguir.addEventListener('click', () => {
-              dejarDeSeguir(usuarioBuscado);
-            });
+            usuariosRef.where('usuario', '==', usuarioBuscado)
+
+              .get()
+              .then((seguidoSnapshot) => {
+                if (seguidoSnapshot.size > 0) {
+                  const seguidoData = seguidoSnapshot.docs[0].data();
+                  const arraySeguidores = seguidoData.arraySeguidores || [];
+
+                  // Verificar si el usuarioActual ya está en la lista de seguidores
+                  if (!arraySeguidores.includes(usuario)) {
+                    // Si no está, agregarlo a la lista de seguidores
+                    arraySeguidores.push(usuario);
+                    // Actualizar datos del usuarioBuscado en la base de datos
+                    usuariosRef.doc(seguidoSnapshot.docs[0].id).update({
+                      arraySeguidores: arraySeguidores
+                    }).then(() => {
+                      console.log(`${usuario} se agregó a la lista de seguidores de ${usuarioBuscado}.`);
+                      // Resto de tu lógica después de seguir al usuario
+                    }).catch((error) => {
+                      console.error('Error al actualizar los datos del usuarioBuscado:', error);
+                    });
+                  } else {
+                    console.log(`${usuario} ya está en la lista de seguidores de ${usuarioBuscado}.`);
+                    // Resto de tu lógica después de seguir al usuario
+                  }
+                } else {
+                  console.log("usuarioBuscado no encontrado en la base de datos");
+                }
+              })
+              .catch((error) => {
+                console.error('Error al consultar la base de datos para usuarioBuscado:', error);
+              });
+
           }).catch((error) => {
-            console.error('Error al actualizar los datos:', error);
+            console.error('Error al actualizar los datos del usuarioActual:', error);
           });
         } else {
-          console.log(`${usuarioBuscado} ya sigue a este usuario.`);
-          botonSeguir.innerText = 'Dejar de seguir';
-          // Agregar un manejador de eventos al botón
-          botonSeguir.addEventListener('click', () => {
-            dejarDeSeguir(usuarioBuscado);
-          });
+          console.log(`${usuario} ya sigue a ${usuarioBuscado}.`);
+          // Resto de tu lógica si el usuario ya sigue al usuarioBuscado
         }
       } else {
-        console.log("Usuario no encontrado en la base de datos");
+        console.log("UsuarioActual no encontrado en la base de datos");
       }
     })
     .catch((error) => {
-      console.error('Error al consultar la base de datos:', error);
+      console.error('Error al consultar la base de datos para usuarioActual:', error);
     });
 }
 
@@ -463,38 +487,66 @@ function dejarDeSeguir() {
         const userData = querySnapshot.docs[0].data();
         let arraySeguidos = userData.arraySeguidos || [];
 
-        // Verificar si el usuario está en el array de seguidores
+        // Verificar si el usuarioBuscado está en el array de seguidos del usuario
         const index = arraySeguidos.indexOf(usuarioBuscado);
         if (index > -1) {
           // Si está, eliminarlo del array
           arraySeguidos.splice(index, 1);
-          actualizarLocalStorage();
-          // Actualizar los datos en la base de datos
+          // Actualizar datos del usuario en la base de datos
           usuariosRef.doc(querySnapshot.docs[0].id).update({
             arraySeguidos: arraySeguidos
           }).then(() => {
-            console.log(`Usuario ${usuarioBuscado} dejó de seguir.`);
-            // Cambiar el texto del botón de nuevo
-            const botonSeguir = document.getElementById('botonSeguir');
-            botonSeguir.innerText = 'Seguir';
-            // Eliminar el manejador de eventos para evitar múltiples acciones
-            botonSeguir.removeEventListener('click', dejarDeSeguir);
-            // Volver a añadir el evento de seguir al botón
-            botonSeguir.addEventListener('click', () => {
-              seguirUsuario(usuarioBuscado);
-            });
+            console.log(`El usuario ${usuario} dejó de seguir a ${usuarioBuscado}.`);
+
+            // Obtener datos del usuarioBuscado
+            usuariosRef.where('usuario', '==', usuarioBuscado)
+              .get()
+              .then((seguidoSnapshot) => {
+                if (seguidoSnapshot.size > 0) {
+                  const seguidoData = seguidoSnapshot.docs[0].data();
+                  let arraySeguidores = seguidoData.arraySeguidores || [];
+                  // Verificar si el usuario está en la lista de seguidores del usuarioBuscado
+                  const indexSeguidor = arraySeguidores.indexOf(usuario);
+                  if (indexSeguidor > -1) {
+                    // Si está, eliminarlo de la lista de seguidores
+                    arraySeguidores.splice(indexSeguidor, 1);
+                    // Actualizar datos del usuarioBuscado en la base de datos
+                    usuariosRef.doc(seguidoSnapshot.docs[0].id).update({
+                      arraySeguidores: arraySeguidores
+                    }).then(() => {
+                      console.log(`${usuario} se eliminó de la lista de seguidores de ${usuarioBuscado}.`);
+                      // Resto de tu lógica después de dejar de seguir al usuario
+                    }).catch((error) => {
+                      console.error('Error al actualizar los datos del usuarioBuscado:', error);
+                    });
+                  } else {
+                    console.log(`${usuario} no está en la lista de seguidores de ${usuarioBuscado}.`);
+                    // Resto de tu lógica después de dejar de seguir al usuario
+                  }
+                } else {
+                  console.log("usuarioBuscado no encontrado en la base de datos");
+                }
+              })
+              .catch((error) => {
+                console.error('Error al consultar la base de datos para usuarioBuscado:', error);
+              });
+
           }).catch((error) => {
-            console.error('Error al actualizar los datos:', error);
+            console.error('Error al actualizar los datos del usuario:', error);
           });
+        } else {
+          console.log(`${usuario} no sigue a ${usuarioBuscado}.`);
+          // Resto de tu lógica si el usuario no sigue al usuarioBuscado
         }
       } else {
-        console.log("Usuario no encontrado en la base de datos");
+        console.log("usuario no encontrado en la base de datos");
       }
     })
     .catch((error) => {
-      console.error('Error al consultar la base de datos:', error);
+      console.error('Error al consultar la base de datos para usuario:', error);
     });
 }
+
 
 window.onload = function() {
   seguirUsuario(usuarioBuscado);
@@ -509,7 +561,7 @@ function actualizarLocalStorage() {
     .then((querySnapshot) => {
       if (querySnapshot.size > 0) {
         const userData = querySnapshot.docs[0].data();
-        const seguidores = userData.seguidoresArray || [];
+        const seguidores = userData.arraySeguidores || [];
         const seguidos = userData.arraySeguidos || [];
 
         // Actualizar el LocalStorage con las longitudes actualizadas

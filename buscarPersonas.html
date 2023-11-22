@@ -144,16 +144,17 @@ userList.addEventListener("click", (event) => {
           const userData = querySnapshot.docs[0].data();
           
           // Obtén los seguidores y seguidos del usuario
-          const seguidores = userData.seguidores;
-          const seguidos = userData.seguidos;
+          const seguidores = userData.arraySeguidores;
+    const seguidos = userData.arraySeguidos;
           const fotoPerf = userData.fotoDePerfil;
           // Almacena los datos en el LocalStorage
-          localStorage.setItem("seguidores", JSON.stringify(seguidores));
-          localStorage.setItem("seguidos", JSON.stringify(seguidos));
+          localStorage.setItem("seguidores", seguidores.length);
+    localStorage.setItem("seguidos", seguidos.length);
+
           localStorage.setItem("fotoPerfil", fotoPerf);
           document.getElementById("nombreUsuario").innerHTML = usuario;
-          document.getElementById("seguidores").innerHTML = "Seguidores: " + seguidores;
-           document.getElementById("seguidos").innerHTML = "Seguidos: " + seguidos;
+          document.getElementById("seguidores").innerHTML = "Seguidores: " + localStorage.getItem("seguidores");
+           document.getElementById("seguidos").innerHTML = "Seguidos: " + localStorage.getItem("seguidos");
             document.getElementById("fotoPerfil").src = fotoPerf;
         } else {
           console.log("Usuario no encontrado en la base de datos");
@@ -180,8 +181,8 @@ userList.addEventListener("click", (event) => {
   if (doc.exists) {
     const userData = doc.data();
 
-    const seguidores = userData.seguidores;
-    const seguidos = userData.seguidos;
+    const seguidores = userData.arraySeguidores;
+    const seguidos = userData.arraySeguidos;
     const mail = userData.mail;
     const descripcion = userData.descripcion;
     const nombre = userData.nombre;
@@ -189,8 +190,8 @@ userList.addEventListener("click", (event) => {
     const fotoPerfil = userData.fotoDePerfil;
 
           // Almacena los datos en el LocalStorage
-    localStorage.setItem("seguidores", JSON.stringify(seguidores));
-    localStorage.setItem("seguidos", JSON.stringify(seguidos));
+          localStorage.setItem("seguidores", seguidores.length);
+    localStorage.setItem("seguidos", seguidos.length);
     localStorage.setItem("mail", mail);
     localStorage.setItem("descripcion", descripcion);
     localStorage.setItem("nombre", nombre);
@@ -201,8 +202,8 @@ userList.addEventListener("click", (event) => {
     
     document.getElementById("nombreUsuario").innerHTML = "@"+ usuario;
   document.getElementById("nombre").innerHTML = localStorage.getItem("nombre");
-  document.getElementById("seguidores").innerHTML = "Seguidores: " + seguidores;
-  document.getElementById("seguidos").innerHTML = "Seguidos: " + seguidos;
+  document.getElementById("seguidores").innerHTML = "Seguidores: " + localStorage.getItem("seguidores");
+  document.getElementById("seguidos").innerHTML = "Seguidos: " + localStorage.getItem("seguidos");
   document.getElementById("seguidos2").innerHTML = seguidos;
   document.getElementById("seguidores2").innerHTML = seguidores;
   document.getElementById("fotoPerfil").style.backgroundImage = `url(${fotoPerfil})`;
